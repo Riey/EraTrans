@@ -98,7 +98,8 @@ namespace Fillter
                         string temp = reader.ReadLine();
                         count++;
                         ERB.Add(temp);//원본 저장
-                        if (temp.Contains("PRINT") && !temp.First().Equals(';'))//주석문이 아닐때 PRINT가 인식되면
+                        temp = temp.Contains(';') ? temp.Substring(0, temp.IndexOf(';')) : temp;//주석제거
+                        if (temp.Contains("PRINT"))
                         {
                             if (temp.Contains("PRINTDATA"))//DATA형
                             {
