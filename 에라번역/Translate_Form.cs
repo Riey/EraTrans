@@ -264,7 +264,7 @@ namespace 에라번역
             if (back_logs.Count > 0)
             {
                 p_logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
-                if ((logs.Peek().했던일 == ChangeLog.행동.복원) || (back_logs.Peek().했던일 == ChangeLog.행동.삭제))
+                if ((p_logs.Peek().했던일 == ChangeLog.행동.복원) || (p_logs.Peek().했던일 == ChangeLog.행동.삭제))
                 {
                     word_update();
                 }
