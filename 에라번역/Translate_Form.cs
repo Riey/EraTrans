@@ -246,7 +246,7 @@ namespace 에라번역
         {
             if (logs.Count > 0)
             {
-                back_logs.Push(ChangeLog.되돌리기(logs.Pop(), parsers));
+                back_logs.Push(ChangeLog.되돌리기(p_logs.Pop(), parsers));
                 if ((back_logs.Peek().했던일 == ChangeLog.행동.복원) || (back_logs.Peek().했던일 == ChangeLog.행동.삭제))
                 {
                     word_update();
@@ -263,7 +263,7 @@ namespace 에라번역
         {
             if (back_logs.Count > 0)
             {
-                logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
+                p_logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
                 if ((logs.Peek().했던일 == ChangeLog.행동.복원) || (back_logs.Peek().했던일 == ChangeLog.행동.삭제))
                 {
                     word_update();
@@ -333,7 +333,7 @@ namespace 에라번역
                 if (!item.info.Japanese)
                     continue;
                 string temp = trans.번역(item.info.str);
-                logs.Push(new ChangeLog(item.erb_name, item.info.str, temp));
+                logs.Push(new ChangeLog(item.erb_name, item.line, item.info.str, temp));
                 item.info.str = temp;
                 node.Text = item.GetString(setting.LineSetting);
             }

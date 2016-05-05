@@ -129,35 +129,5 @@ namespace Fillter
         {
             return ez.GetString(source);
         }
-        //private class Fillter
-        //{
-        //    public void 특문변환(ref string original)
-        //    {
-        //        original = original.Replace("&", "%26").Replace("#", "%23").Replace("@", "%40").Replace("「", "\"").Replace("」", "\"");
-        //    }
-        //    public void 괄호변환(ref string original)
-        //    {
-        //        if (original.Trim().StartsWith("\"") && original.Trim().EndsWith("\""))
-        //        {
-        //            string[] temp = original.Split(new char[] { '\"' }, StringSplitOptions.None);
-        //            string result = "";
-        //            for (int i = 0; i < temp.Length - 1; i++)
-        //            {
-        //                result += temp[i];
-        //                if (i == 0)
-        //                    result += "「";
-        //                else if (i == temp.Length - 2)
-        //                    result += "」";
-        //                else
-        //                    result += "\"";
-        //            }
-        //            original = result;
-        //        }
-        //        else
-        //        {
-        //            return;
-        //        }
-        //    }
-        //}
     }
 }
