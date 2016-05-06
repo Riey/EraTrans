@@ -248,6 +248,7 @@ namespace 에라번역
 
         private void 폴더열기버튼_Click(object sender, EventArgs e)
         {
+            folderBrowserDialog1.Description = "ERB파일이 들어있는 폴더를 선택해주세요";
             folderBrowserDialog1.ShowDialog();
             var files = GetFiles(new DirectoryInfo(folderBrowserDialog1.SelectedPath)).Where(f => f.Extension.ToUpper() == ".ERB").Select(f=>f.FullName).ToArray();
             Translate(files);

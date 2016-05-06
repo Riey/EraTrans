@@ -213,7 +213,6 @@
             // 
             // word_list
             // 
-            this.word_list.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
             this.word_list.Font = new System.Drawing.Font("맑은 고딕", 12F);
             this.word_list.Location = new System.Drawing.Point(12, 13);
             this.word_list.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
@@ -223,7 +222,6 @@
             this.word_list.ShowPlusMinus = false;
             this.word_list.Size = new System.Drawing.Size(1078, 865);
             this.word_list.TabIndex = 19;
-            this.word_list.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.Word_list_DrawNode);
             // 
             // Translate_Form
             // 

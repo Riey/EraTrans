@@ -13,15 +13,14 @@ namespace 에라번역
 {
     public partial class Change_Form : Form
     {
+        public static string TranslatedText = null;
         Translate Translate;
-        IReceiveData<string> receive;
         string line;
         string original;
         bool exit = false;
-        string trans = null;
-        public Change_Form(NodeInfo item, IReceiveData<string> receive, Translate Translate)
+        public Change_Form(NodeInfo item, Translate Translate)
         {
-            this.receive = receive;
+            TranslatedText = null;
             line = item.erb_filename + "\r\n" + item.line + "번째줄";
             original = item.info.str;
             this.Translate = Translate;
@@ -38,12 +37,12 @@ namespace 에라번역
         {
             if (string.IsNullOrEmpty(Translated_Text.Text))
             {
-                receive.SetData(new string[] { null });
+                TranslatedText = null;
                 return;
             }
             if (exit)
             {
-                receive.SetData(new string[] { null });
+                TranslatedText = null;
                 return;
             }
             DialogResult result = MessageBox.Show(line + "의\r\n" + original + "\t\t을\r\n" + Translated_Text.Text + "\t\t로 번역하시겠습니까?", "번역", MessageBoxButtons.YesNo);
@@ -53,7 +52,7 @@ namespace 에라번역
                 {
                     Translated_Text.Text = " " + Translated_Text.Text;
                 }
-                receive.SetData(new string[] { Translated_Text.Text });
+                TranslatedText = Translated_Text.Text;
             }
             if (result == DialogResult.No)
             {
@@ -64,13 +63,7 @@ namespace 에라번역
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
-            if (trans != null)
-            {
-                Translated_Text.Text = trans;
-                return;
-            }
             Translated_Text.Text = Translate.번역(Original_Text.Text);
-            trans = Translated_Text.Text;
         }
         private void 종료버튼_Click(object sender, EventArgs e)
         {

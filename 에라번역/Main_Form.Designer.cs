@@ -66,8 +66,8 @@
             // 번역적용버튼
             // 
             this.번역적용버튼.Enabled = false;
-            this.번역적용버튼.Location = new System.Drawing.Point(204, 24);
-            this.번역적용버튼.Margin = new System.Windows.Forms.Padding(15, 12, 3, 4);
+            this.번역적용버튼.Location = new System.Drawing.Point(112, 71);
+            this.번역적용버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.번역적용버튼.Name = "번역적용버튼";
             this.번역적용버튼.Size = new System.Drawing.Size(82, 39);
             this.번역적용버튼.TabIndex = 2;
@@ -77,8 +77,8 @@
             // 번역합치기버튼
             // 
             this.번역합치기버튼.Enabled = false;
-            this.번역합치기버튼.Location = new System.Drawing.Point(113, 71);
-            this.번역합치기버튼.Margin = new System.Windows.Forms.Padding(15, 12, 3, 4);
+            this.번역합치기버튼.Location = new System.Drawing.Point(201, 71);
+            this.번역합치기버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.번역합치기버튼.Name = "번역합치기버튼";
             this.번역합치기버튼.Size = new System.Drawing.Size(82, 39);
             this.번역합치기버튼.TabIndex = 3;
@@ -107,10 +107,6 @@
             this.EncodingText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.EncodingText.Enter += new System.EventHandler(this.EncodingText_Enter);
             // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.Description = "ERB파일이 들어있는 폴더를 선택해주세요";
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Multiselect = true;
@@ -120,7 +116,7 @@
             // 폴더열기버튼
             // 
             this.폴더열기버튼.Location = new System.Drawing.Point(113, 24);
-            this.폴더열기버튼.Margin = new System.Windows.Forms.Padding(15, 12, 3, 4);
+            this.폴더열기버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.폴더열기버튼.Name = "폴더열기버튼";
             this.폴더열기버튼.Size = new System.Drawing.Size(82, 39);
             this.폴더열기버튼.TabIndex = 6;

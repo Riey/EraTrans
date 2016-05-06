@@ -2,17 +2,14 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Fillter;
-using System.IO;
 using System.Diagnostics;
 
 namespace 에라번역
 {
-    public partial class Translate_Form : Form, IReceiveData<string>
+    public partial class Translate_Form : Form
     {
         public Translate_Form(Dictionary<string,ERB_Parser>parsers,Stack<ChangeLog>logs,Stack<ChangeLog>back_logs,Setting setting, string version)
         {
@@ -22,15 +19,6 @@ namespace 에라번역
             p_logs = logs;
             this.back_logs = back_logs;
             InitializeComponent();
-        }
-
-        private void Word_list_DrawNode(object sender, DrawTreeNodeEventArgs e)
-        {
-            if (!e.Node.IsVisible)
-                return;
-            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-            e.Graphics.DrawString(e.Node.Text, e.Node.NodeFont ?? word_list.Font, Brushes.Black, e.Bounds);
         }
 
         private void Translate_Form_Load(object sender, EventArgs e)
@@ -151,12 +139,12 @@ namespace 에라번역
                 if (Node.Level < 1)
                     continue;
                 NodeInfo item = Node.Tag as NodeInfo;
-                Change_Form cf = new Change_Form(item, this, trans);
+                Change_Form cf = new Change_Form(item, trans);
                 cf.ShowDialog();
-                if (recive_data[0] == null)
+                if (Change_Form.TranslatedText == null)
                     continue;
-                logs.Push(new ChangeLog(item.erb_name, item.info.str, recive_data[0]));
-                parsers[item.erb_name].dic[item.line].str = recive_data[0];
+                logs.Push(new ChangeLog(item.erb_name, item.info.str, Change_Form.TranslatedText));
+                parsers[item.erb_name].dic[item.line].str = Change_Form.TranslatedText;
                 Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
@@ -338,11 +326,6 @@ namespace 에라번역
                 node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
-        }
-        private string[] recive_data = new string[] { null };
-        public void SetData(string[] data)
-        {
-            recive_data = data;
         }
         #region 필드
         public delegate void 로그핸들러(Button btn, bool enable);
@@ -621,9 +604,5 @@ namespace 에라번역
             this.info = info;
             erb_filename = erb_name.Split('\\').Last();
         }
-    }
-    public interface IReceiveData<T>
-    {
-        void SetData(T[] data);
     }
 }
