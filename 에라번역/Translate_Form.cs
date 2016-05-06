@@ -136,7 +136,7 @@ namespace 에라번역
             word_list.BeginUpdate();
             foreach (TreeNode Node in word_list.SelectedNodes)
             {
-                if (Node.Level < 1)
+                if (!(Node.Tag is NodeInfo))
                     continue;
                 NodeInfo item = Node.Tag as NodeInfo;
                 Change_Form cf = new Change_Form(item, trans);
@@ -194,7 +194,7 @@ namespace 에라번역
             {
                 foreach (TreeNode Node in word_list.SelectedNodes)
                 {
-                    if (Node.Level < 1)
+                    if (!(Node.Tag is NodeInfo))
                         continue;
                     if (Node.Name.Split('|').First() == "DATALIST")
                     {
@@ -315,15 +315,17 @@ namespace 에라번역
             if (word_list.SelectedNodes.Count == 0)
                 return;
             word_list.BeginUpdate();
-            foreach (TreeNode node in word_list.SelectedNodes)
+            foreach (TreeNode Node in word_list.SelectedNodes)
             {
-                var item = node.Tag as NodeInfo;
+                if (!(Node.Tag is NodeInfo))
+                    continue;
+                var item = Node.Tag as NodeInfo;
                 if (!item.info.Japanese)
                     continue;
                 string temp = trans.번역(item.info.str);
                 logs.Push(new ChangeLog(item.erb_name, item.line, item.info.str, temp));
                 item.info.str = temp;
-                node.Text = item.GetString(setting.LineSetting);
+                Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
         }
@@ -486,14 +488,14 @@ namespace 에라번역
                     }
                 case (행동.일괄번역):
                     {
-                        Queue<DicLog> diclog = new Queue<DicLog>();
+                        List<Tuple<int, string>> diclog = new List<Tuple<int, string>>();
                         foreach (var temp in parsers[log.erb_name].dic)
                         {
-                            diclog.Enqueue(new DicLog(temp.Key, temp.Value.str.Replace(log.str2, log.str1)));
+                            diclog.Add(new Tuple<int, string>(temp.Key, temp.Value.str.Replace(log.str2, log.str1)));
                         }
                         foreach (var temp in diclog)
                         {
-                            parsers[log.erb_name].dic[temp.key] = new LineInfo(temp.value);
+                            parsers[log.erb_name].dic[temp.Item1] = new LineInfo(temp.Item2);
                         }
                         cl = new ChangeLog(log.erb_name, log.str2, log.str1);
                         break;
@@ -516,16 +518,6 @@ namespace 에라번역
                     }
             }
             return cl;
-        }
-    }
-    public class DicLog
-    {
-        public int key { get; }
-        public string value { get; }
-        public DicLog(int key, string value)
-        {
-            this.key = key;
-            this.value = value;
         }
     }
     [Serializable]
