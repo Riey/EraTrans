@@ -148,7 +148,6 @@ namespace 에라번역
         {
             List<FileInfo> files = new List<FileInfo>(info.GetFiles());
             DirectoryInfo[] dirs = info.GetDirectories();
-            object obj = new object();
             if (dirs.Length > 0)
             {
                 foreach (var dir in dirs)
@@ -250,6 +249,8 @@ namespace 에라번역
         {
             folderBrowserDialog1.Description = "ERB파일이 들어있는 폴더를 선택해주세요";
             folderBrowserDialog1.ShowDialog();
+            if (folderBrowserDialog1.SelectedPath == "")
+                return;
             var files = GetFiles(new DirectoryInfo(folderBrowserDialog1.SelectedPath)).Where(f => f.Extension.ToUpper() == ".ERB").Select(f=>f.FullName).ToArray();
             Translate(files);
         }

@@ -121,8 +121,7 @@ namespace Fillter
         ezTransXP ez = new ezTransXP();
         public string[] 일괄번역(string[] sources)
         {
-            string[] targets = new string[sources.Length];
-            var result = targets.Select(target => ez.GetString(target)).ToArray();
+            var result = sources.Select(source => ez.GetString(source)).ToArray();
             return result;
         }
         public string 번역(string source)

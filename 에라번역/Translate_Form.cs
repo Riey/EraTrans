@@ -37,19 +37,19 @@ namespace 에라번역
 
                         if (p_logs.Count > 0)
                         {
-                            Invoke(new 로그핸들러(method), new object[] { 실행취소버튼, true });
+                            Invoke(new LogHandler(method), new object[] { 실행취소버튼, true });
                         }
                         else
                         {
-                            Invoke(new 로그핸들러(method), new object[] { 실행취소버튼, false });
+                            Invoke(new LogHandler(method), new object[] { 실행취소버튼, false });
                         }
                         if (back_logs.Count > 0)
                         {
-                            Invoke(new 로그핸들러(method), new object[] { 다시실행버튼, true });
+                            Invoke(new LogHandler(method), new object[] { 다시실행버튼, true });
                         }
                         else
                         {
-                            Invoke(new 로그핸들러(method), new object[] { 다시실행버튼, false });
+                            Invoke(new LogHandler(method), new object[] { 다시실행버튼, false });
                         }
                         Thread.Sleep(200);
                     }
@@ -103,7 +103,6 @@ namespace 에라번역
                         TreeNode erbNode = new TreeNode(item.erb_filename);
                         erbNode.Name = item.erb_filename;
                         erbNode.Tag = "ERB";
-                        erbNode.NodeFont = new Font("맑은 고딕", 14, FontStyle.Regular);
                         word_list.Nodes.Add(erbNode);
                     }
                     var erb_node = word_list.Nodes.Find(item.erb_filename, false).First();
@@ -328,9 +327,10 @@ namespace 에라번역
                 Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
+            changed = true;
         }
         #region 필드
-        public delegate void 로그핸들러(Button btn, bool enable);
+        public delegate void LogHandler(Button btn, bool enable);
         bool changed = false;
         Dictionary<string,ERB_Parser> parsers;
         string version;
