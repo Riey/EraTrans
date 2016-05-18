@@ -103,7 +103,7 @@ namespace TreeViewMS
                 // SHIFT is pressed
                 if (bShift)
                 {
-                    Queue myQueue = new Queue();
+                    Queue<TreeNode> myQueue = new Queue<TreeNode>();
 
                     TreeNode uppernode = m_firstNode;
                     TreeNode bottomnode = e.Node;
@@ -217,10 +217,18 @@ namespace TreeViewMS
         protected void removePaintFromNodes()
         {
             if (m_coll.Count == 0) return;
-
-            TreeNode n0 = (TreeNode)m_coll[0];
-            Color back = n0.TreeView.BackColor;
-            Color fore = n0.TreeView.ForeColor;
+            Color back = Color.White;
+            Color fore = Color.Black;
+            for (int i = 0; i < m_coll.Count;i++)
+            {
+                var node = m_coll[i] as TreeNode;
+                if (node.TreeView != null)
+                {
+                    back = node.TreeView.BackColor;
+                    fore = node.TreeView.ForeColor;
+                    break;
+                }
+            }
 
             foreach (TreeNode n in m_coll)
             {

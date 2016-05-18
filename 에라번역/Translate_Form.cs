@@ -200,7 +200,6 @@ namespace 에라번역
                             if (!parsers.ContainsKey(Node.Name))
                                 continue;
                             parsers.Remove(Node.Name);
-                            word_list.SelectedNodes.Clear();
                         }
                         continue;
                     }
