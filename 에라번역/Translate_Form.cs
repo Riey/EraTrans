@@ -98,14 +98,14 @@ namespace 에라번역
                 }).Select(item => new NodeInfo(item.Key, parser.Key, item.Value)).ToArray();
                 foreach (var item in items)
                 {
-                    if (!word_list.Nodes.ContainsKey(item.erb_filename))
+                    if (!word_list.Nodes.ContainsKey(item.erb_name))
                     {
                         TreeNode erbNode = new TreeNode(item.erb_filename);
-                        erbNode.Name = item.erb_filename;
+                        erbNode.Name = item.erb_name;
                         erbNode.Tag = "ERB";
                         word_list.Nodes.Add(erbNode);
                     }
-                    var erb_node = word_list.Nodes.Find(item.erb_filename, false).First();
+                    var erb_node = word_list.Nodes.Find(item.erb_name, false).First();
                     var node = new TreeNode();
                     node.Tag = item;
                     node.Text = item.GetString(setting.LineSetting);
@@ -194,7 +194,16 @@ namespace 에라번역
                 foreach (TreeNode Node in word_list.SelectedNodes)
                 {
                     if (!(Node.Tag is NodeInfo))
+                    {
+                        if ((string)Node.Tag == "ERB")
+                        {
+                            if (!parsers.ContainsKey(Node.Name))
+                                continue;
+                            parsers.Remove(Node.Name);
+                            word_list.SelectedNodes.Clear();
+                        }
                         continue;
+                    }
                     if (Node.Name.Split('|').First() == "DATALIST")
                     {
                         foreach(TreeNode node in Node.Nodes)
@@ -234,14 +243,7 @@ namespace 에라번역
             if (logs.Count > 0)
             {
                 back_logs.Push(ChangeLog.되돌리기(p_logs.Pop(), parsers));
-                if ((back_logs.Peek().했던일 == ChangeLog.행동.복원) || (back_logs.Peek().했던일 == ChangeLog.행동.삭제))
-                {
-                    word_update();
-                }
-                else
-                {
-                    Refresh_Word();
-                }
+                word_update();
                 changed = true;
             }
         }
@@ -251,14 +253,7 @@ namespace 에라번역
             if (back_logs.Count > 0)
             {
                 p_logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
-                if ((p_logs.Peek().했던일 == ChangeLog.행동.복원) || (p_logs.Peek().했던일 == ChangeLog.행동.삭제))
-                {
-                    word_update();
-                }
-                else
-                {
-                    Refresh_Word();
-                }
+                word_update();
                 changed = true;
             }
         }
@@ -302,6 +297,10 @@ namespace 에라번역
 
         private void word_list_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Enter)
+            {
+                번역버튼_Click(null, null);
+            }
             if (e.Alt && e.KeyCode == Keys.S)
             {
                 //저장
@@ -585,7 +584,7 @@ namespace 에라번역
         public LineInfo info;
         public string GetString(LineSetting setting)
         {
-            return LineSetting.GetLine(line, info.str, setting);
+            return LineSetting.GetLine(line+1, info.str, setting);
         }
         public NodeInfo(int line,string erb_name, LineInfo info)
         {

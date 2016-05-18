@@ -222,6 +222,8 @@
             this.word_list.ShowPlusMinus = false;
             this.word_list.Size = new System.Drawing.Size(1078, 865);
             this.word_list.TabIndex = 19;
+            this.word_list.KeyDown += new System.Windows.Forms.KeyEventHandler(this.word_list_KeyDown);
+            this.word_list.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.word_list_MouseDoubleClick);
             // 
             // Translate_Form
             // 

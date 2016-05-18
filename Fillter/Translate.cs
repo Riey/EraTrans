@@ -126,7 +126,14 @@ namespace Fillter
         }
         public string 번역(string source)
         {
-            return ez.GetString(source);
+            if (string.IsNullOrWhiteSpace(source))
+                return source;
+            var temp = ez.GetString(source);
+            if(temp.First()!=' ')
+            {
+                temp = " " + temp;
+            }
+            return temp;
         }
     }
 }
