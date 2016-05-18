@@ -30,9 +30,6 @@
         {
             this.파일열기버튼 = new System.Windows.Forms.Button();
             this.VersionText = new System.Windows.Forms.TextBox();
-            this.번역적용버튼 = new System.Windows.Forms.Button();
-            this.번역합치기버튼 = new System.Windows.Forms.Button();
-            this.되돌리기버튼 = new System.Windows.Forms.Button();
             this.EncodingText = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -62,39 +59,6 @@
             this.VersionText.Size = new System.Drawing.Size(274, 16);
             this.VersionText.TabIndex = 1;
             this.VersionText.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // 번역적용버튼
-            // 
-            this.번역적용버튼.Enabled = false;
-            this.번역적용버튼.Location = new System.Drawing.Point(112, 71);
-            this.번역적용버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.번역적용버튼.Name = "번역적용버튼";
-            this.번역적용버튼.Size = new System.Drawing.Size(82, 39);
-            this.번역적용버튼.TabIndex = 2;
-            this.번역적용버튼.Text = "번역적용";
-            this.번역적용버튼.UseVisualStyleBackColor = true;
-            // 
-            // 번역합치기버튼
-            // 
-            this.번역합치기버튼.Enabled = false;
-            this.번역합치기버튼.Location = new System.Drawing.Point(201, 71);
-            this.번역합치기버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.번역합치기버튼.Name = "번역합치기버튼";
-            this.번역합치기버튼.Size = new System.Drawing.Size(82, 39);
-            this.번역합치기버튼.TabIndex = 3;
-            this.번역합치기버튼.Text = "번역합치기";
-            this.번역합치기버튼.UseVisualStyleBackColor = true;
-            // 
-            // 되돌리기버튼
-            // 
-            this.되돌리기버튼.Enabled = false;
-            this.되돌리기버튼.Location = new System.Drawing.Point(24, 71);
-            this.되돌리기버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.되돌리기버튼.Name = "되돌리기버튼";
-            this.되돌리기버튼.Size = new System.Drawing.Size(82, 39);
-            this.되돌리기버튼.TabIndex = 4;
-            this.되돌리기버튼.Text = "되돌리기";
-            this.되돌리기버튼.UseVisualStyleBackColor = true;
             // 
             // EncodingText
             // 
@@ -132,9 +96,6 @@
             this.ClientSize = new System.Drawing.Size(347, 237);
             this.Controls.Add(this.폴더열기버튼);
             this.Controls.Add(this.EncodingText);
-            this.Controls.Add(this.되돌리기버튼);
-            this.Controls.Add(this.번역합치기버튼);
-            this.Controls.Add(this.번역적용버튼);
             this.Controls.Add(this.VersionText);
             this.Controls.Add(this.파일열기버튼);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
@@ -155,9 +116,6 @@
 
         private System.Windows.Forms.Button 파일열기버튼;
         private System.Windows.Forms.TextBox VersionText;
-        private System.Windows.Forms.Button 번역적용버튼;
-        private System.Windows.Forms.Button 번역합치기버튼;
-        private System.Windows.Forms.Button 되돌리기버튼;
         private System.Windows.Forms.TextBox EncodingText;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;

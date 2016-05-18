@@ -319,7 +319,7 @@ namespace 에라번역
                 if (!(Node.Tag is NodeInfo))
                     continue;
                 var item = Node.Tag as NodeInfo;
-                if (!item.info.Japanese)
+                if (string.IsNullOrWhiteSpace(item.info.str))
                     continue;
                 string temp = trans.번역(item.info.str);
                 logs.Push(new ChangeLog(item.erb_name, item.line, item.info.str, temp));
@@ -423,6 +423,7 @@ namespace 에라번역
         }
         public ChangeLog(string erb_name, int line)
         {
+            //복원용 생성자
             this.erb_name = erb_name;
             줄번호 = line;
             했던일 = 행동.복원;
@@ -447,10 +448,7 @@ namespace 에라번역
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         public static ChangeLog 다시실행(ChangeLog log, Dictionary<string,ERB_Parser>parsers)
         {
