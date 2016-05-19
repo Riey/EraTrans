@@ -34,7 +34,6 @@
             this.korean_cb = new System.Windows.Forms.CheckBox();
             this.japanese_cb = new System.Windows.Forms.CheckBox();
             this.etc_cb = new System.Windows.Forms.CheckBox();
-            this.삭제버튼 = new System.Windows.Forms.Button();
             this.설정버튼 = new System.Windows.Forms.Button();
             this.일괄번역버튼 = new System.Windows.Forms.Button();
             this.다시실행버튼 = new System.Windows.Forms.Button();
@@ -109,20 +108,9 @@
             this.etc_cb.UseVisualStyleBackColor = true;
             this.etc_cb.CheckStateChanged += new System.EventHandler(this.표시언어바꾸기);
             // 
-            // 삭제버튼
-            // 
-            this.삭제버튼.Location = new System.Drawing.Point(1113, 325);
-            this.삭제버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.삭제버튼.Name = "삭제버튼";
-            this.삭제버튼.Size = new System.Drawing.Size(100, 44);
-            this.삭제버튼.TabIndex = 6;
-            this.삭제버튼.Text = "삭제하기";
-            this.삭제버튼.UseVisualStyleBackColor = true;
-            this.삭제버튼.Click += new System.EventHandler(this.삭제버튼_Click);
-            // 
             // 설정버튼
             // 
-            this.설정버튼.Location = new System.Drawing.Point(1113, 429);
+            this.설정버튼.Location = new System.Drawing.Point(1113, 377);
             this.설정버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.설정버튼.Name = "설정버튼";
             this.설정버튼.Size = new System.Drawing.Size(100, 44);
@@ -168,7 +156,7 @@
             // 
             // 새로고침버튼
             // 
-            this.새로고침버튼.Location = new System.Drawing.Point(1113, 377);
+            this.새로고침버튼.Location = new System.Drawing.Point(1113, 325);
             this.새로고침버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.새로고침버튼.Name = "새로고침버튼";
             this.새로고침버튼.Size = new System.Drawing.Size(100, 44);
@@ -239,7 +227,6 @@
             this.Controls.Add(this.다시실행버튼);
             this.Controls.Add(this.일괄번역버튼);
             this.Controls.Add(this.설정버튼);
-            this.Controls.Add(this.삭제버튼);
             this.Controls.Add(this.etc_cb);
             this.Controls.Add(this.japanese_cb);
             this.Controls.Add(this.korean_cb);
@@ -264,7 +251,6 @@
         private System.Windows.Forms.CheckBox korean_cb;
         private System.Windows.Forms.CheckBox japanese_cb;
         private System.Windows.Forms.CheckBox etc_cb;
-        private System.Windows.Forms.Button 삭제버튼;
         private System.Windows.Forms.Button 설정버튼;
         private System.Windows.Forms.Button 일괄번역버튼;
         private System.Windows.Forms.Button 다시실행버튼;

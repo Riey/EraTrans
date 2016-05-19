@@ -15,7 +15,6 @@ namespace 에라번역
     {
         private BinaryFormatter formatter = new BinaryFormatter();
         private Setting setting;
-        private LogManager logManager;
 
         public Main_Form(string[] args)
         {
@@ -77,7 +76,7 @@ namespace 에라번역
                     return;
                 }
             });
-            Translate_Form tf = new Translate_Form(parsers, logManager.logs, logManager.back_logs, setting, VersionText.Text);
+            Translate_Form tf = new Translate_Form(parsers, setting, VersionText.Text);
             tf.ShowDialog();
         }
         private void Translate(string path)
@@ -97,17 +96,6 @@ namespace 에라번역
             {
                 setting = new Setting(CheckState.Indeterminate, CheckState.Indeterminate, CheckState.Unchecked, LineSetting.Default,AuthorSetting.Default);
             }
-            try
-            {
-                using (FileStream fs = new FileStream(Application.StartupPath + "\\Res\\Logs.dat", FileMode.Open))
-                {
-                    logManager = formatter.Deserialize(fs) as LogManager;
-                }
-            }
-            catch (Exception)
-            {
-                logManager = new LogManager(true);
-            }
             Save();
         }
         private void Save()
@@ -115,10 +103,6 @@ namespace 에라번역
             using (FileStream fs = new FileStream(Application.StartupPath + "\\Res\\Setting.dat", FileMode.Create))
             {
                 formatter.Serialize(fs, setting);
-            }
-            using (FileStream fs = new FileStream(Application.StartupPath + "\\Res\\Logs.dat", FileMode.Create))
-            {
-                formatter.Serialize(fs, logManager);
             }
         }
 

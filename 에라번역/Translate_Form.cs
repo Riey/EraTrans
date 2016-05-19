@@ -11,13 +11,11 @@ namespace 에라번역
 {
     public partial class Translate_Form : Form
     {
-        public Translate_Form(Dictionary<string,ERB_Parser>parsers,Stack<ChangeLog>logs,Stack<ChangeLog>back_logs,Setting setting, string version)
+        public Translate_Form(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
         {
             this.parsers = parsers;
             this.version = version;
             this.setting = setting;
-            p_logs = logs;
-            this.back_logs = back_logs;
             InitializeComponent();
         }
 
@@ -75,6 +73,12 @@ namespace 에라번역
         }
         private void word_update()
         {
+            TreeNode Top = null;
+            var extends = word_list.Nodes.Cast<TreeNode>().Where(node => node.IsExpanded).Select(node=>node.Name).ToArray();
+            if (word_list.TopNode != null)
+            {
+                Top = word_list.TopNode;
+            }
             word_list.Nodes.Clear();
             foreach (var parser in parsers)
             {
@@ -126,6 +130,16 @@ namespace 에라번역
                         erb_node.Nodes.Add(node);
                     }
                 }
+            }
+            if (Top != null)
+            {
+                word_list.TopNode = word_list.Nodes.Find(Top.Name, true).First();
+            }
+            foreach(var extend in extends)
+            {
+                var search = word_list.Nodes.Find(extend, false);
+                if (search.Length > 0)
+                    search.First().Expand();
             }
         }
         private void 번역버튼_Click(object sender, EventArgs e)
@@ -183,46 +197,6 @@ namespace 에라번역
             logthread.Abort();
             GC.Collect();
         }
-
-        private void 삭제버튼_Click(object sender, EventArgs e)
-        {
-            if (word_list.SelectedNodes.Count == 0)
-                return;
-            DialogResult result = MessageBox.Show("정말 삭제하시겠습니까?", "삭제", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
-            {
-                foreach (TreeNode Node in word_list.SelectedNodes)
-                {
-                    if (!(Node.Tag is NodeInfo))
-                    {
-                        if ((string)Node.Tag == "ERB")
-                        {
-                            if (!parsers.ContainsKey(Node.Name))
-                                continue;
-                            parsers.Remove(Node.Name);
-                        }
-                        continue;
-                    }
-                    if (Node.Name.Split('|').First() == "DATALIST")
-                    {
-                        foreach(TreeNode node in Node.Nodes)
-                        {
-                            NodeInfo nodeinfo = node.Tag as NodeInfo;
-                            logs.Push(new ChangeLog(nodeinfo.erb_name, nodeinfo.line));
-                            parsers[nodeinfo.erb_name].Remove(nodeinfo.line);
-                        }
-                    }
-                    else
-                    {
-                        NodeInfo node = Node.Tag as NodeInfo;
-                        logs.Push(new ChangeLog(node.erb_name, node.line));
-                        parsers[node.erb_name].Remove(node.line);
-                    }
-                }
-                word_update();
-                changed = true;
-            }
-        }
         private void 설정버튼_Click(object sender, EventArgs e)
         {
             설정창 설정 = new 설정창(setting, parsers);
@@ -242,7 +216,7 @@ namespace 에라번역
             if (logs.Count > 0)
             {
                 back_logs.Push(ChangeLog.되돌리기(p_logs.Pop(), parsers));
-                word_update();
+                    Refresh_Word();
                 changed = true;
             }
         }
@@ -252,7 +226,7 @@ namespace 에라번역
             if (back_logs.Count > 0)
             {
                 p_logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
-                word_update();
+                    Refresh_Word();
                 changed = true;
             }
         }
@@ -333,7 +307,7 @@ namespace 에라번역
         Dictionary<string,ERB_Parser> parsers;
         string version;
         LineSetting LineSetting;
-        Stack<ChangeLog> p_logs;
+        Stack<ChangeLog> p_logs=new Stack<ChangeLog>();
         Stack<ChangeLog> logs
         {
             get
@@ -378,7 +352,7 @@ namespace 에라번역
     {
         public enum 행동
         {
-            번역, 일괄번역, 삭제, 복원
+            번역, 일괄번역
         }
         public string erb_name { get; }
         public int 줄번호 { get; }
@@ -410,22 +384,6 @@ namespace 에라번역
             str1 = 원본;
             str2 = 일괄번역본;
         }
-        public ChangeLog(string erb_name, int line, ERB_Parser parser)
-        {
-            //삭제용 생성자
-            this.erb_name = erb_name;
-            줄번호 = line;
-            했던일 = 행동.삭제;
-            str1 = parser.dic[line].str;
-            str2 = parser._dic[line];
-        }
-        public ChangeLog(string erb_name, int line)
-        {
-            //복원용 생성자
-            this.erb_name = erb_name;
-            줄번호 = line;
-            했던일 = 행동.복원;
-        }
         public ChangeLog(string erb_name, int 줄번호, string str1, string str2, 행동 했던일)
         {
             this.erb_name = erb_name;
@@ -438,10 +396,6 @@ namespace 에라번역
         {
             if (log1.erb_name != log2.erb_name)
                 return false;
-            if (log1.했던일 == 행동.삭제 && log2.했던일 == 행동.삭제 && log1.줄번호 == log2.줄번호)
-            {
-                return true;
-            }
             if (log1.str1 == log2.str1 && log1.str2 == log2.str2 && log1.줄번호 == log2.줄번호 && log1.했던일 == log2.했던일)
             {
                 return true;
@@ -459,14 +413,6 @@ namespace 에라번역
                 case (행동.일괄번역):
                     {
                         return 되돌리기(new ChangeLog(log.erb_name, log.str2, log.str1), parsers);
-                    }
-                case (행동.삭제):
-                    {
-                        return 되돌리기(new ChangeLog(log.erb_name, log.줄번호, parsers[log.erb_name]), parsers);
-                    }
-                case (행동.복원):
-                    {
-                        return 되돌리기(new ChangeLog(log.erb_name, log.줄번호), parsers);
                     }
             }
             return null;
@@ -494,18 +440,6 @@ namespace 에라번역
                             parsers[log.erb_name].dic[temp.Item1] = new LineInfo(temp.Item2);
                         }
                         cl = new ChangeLog(log.erb_name, log.str2, log.str1);
-                        break;
-                    }
-                case (행동.삭제):
-                    {
-                        parsers[log.erb_name].Add(log.줄번호, log.str1, log.str2);
-                        cl = new ChangeLog(log.erb_name, log.줄번호);
-                        break;
-                    }
-                case (행동.복원):
-                    {
-                        cl = new ChangeLog(log.erb_name, log.줄번호, parsers[log.erb_name]);
-                        parsers[log.erb_name].Remove(log.줄번호);
                         break;
                     }
                 default:

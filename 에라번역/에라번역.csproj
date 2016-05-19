@@ -133,7 +133,6 @@
     <Compile Include="Change_Form.Designer.cs">
       <DependentUpon>Change_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogManager.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="TreeViewMS.cs">
       <SubType>Component</SubType>

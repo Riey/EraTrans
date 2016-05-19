@@ -194,53 +194,6 @@ namespace Fillter
             fs.Close();
             fs.Dispose();
         }
-        public void Remove(int index)
-        {
-            dic.Remove(index);
-            _dic.Remove(index);
-            ERB.RemoveAt(index);
-            Dictionary<int, LineInfo> newdic = new Dictionary<int, LineInfo>();
-            foreach (var temp in dic)
-            {
-                if (temp.Key < index)
-                    newdic.Add(temp.Key, temp.Value);
-                else
-                    newdic.Add(temp.Key - 1, temp.Value);
-            }
-            Dictionary<int, string> new_dic = new Dictionary<int, string>();
-            foreach (var temp in _dic)
-            {
-                if (temp.Key < index)
-                    new_dic.Add(temp.Key, temp.Value);
-                else
-                    new_dic.Add(temp.Key - 1, temp.Value);
-            }
-            dic = newdic;
-            _dic = new_dic;
-        }
-        public void Add(int index, string str, string _str)
-        {
-            Dictionary<int, LineInfo> newdic = new Dictionary<int, LineInfo>();
-            foreach (var temp in dic)
-            {
-                if (temp.Key < index)
-                    newdic.Add(temp.Key, temp.Value);
-                else
-                    newdic.Add(temp.Key + 1, temp.Value);
-            }
-            newdic.Add(index, new LineInfo(str));
-            Dictionary<int, string> new_dic = new Dictionary<int, string>();
-            foreach (var temp in _dic)
-            {
-                if (temp.Key < index)
-                    new_dic.Add(temp.Key, temp.Value);
-                else
-                    new_dic.Add(temp.Key + 1, temp.Value);
-            }
-            new_dic.Add(index, _str);
-            dic = newdic;
-            _dic = new_dic;
-        }
         public List<string> ERB = new List<string>();
         public Dictionary<int, LineInfo> dic = new Dictionary<int, LineInfo>();
         public Dictionary<int, string> _dic = new Dictionary<int, string>();
