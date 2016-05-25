@@ -152,7 +152,7 @@ namespace 에라번역
                 if (!(Node.Tag is NodeInfo))
                     continue;
                 NodeInfo item = Node.Tag as NodeInfo;
-                Change_Form cf = new Change_Form(item, trans);
+                Change_Form cf = new Change_Form(item);
                 cf.ShowDialog();
                 if (Change_Form.TranslatedText == null)
                     continue;
@@ -293,7 +293,7 @@ namespace 에라번역
                 var item = Node.Tag as NodeInfo;
                 if (string.IsNullOrWhiteSpace(item.info.str))
                     continue;
-                string temp = trans.번역(item.info.str);
+                string temp = Trans.GetString(item.info.str);
                 logs.Push(new ChangeLog(item.erb_name, item.line, item.info.str, temp));
                 item.info.str = temp;
                 Node.Text = item.GetString(setting.LineSetting);
@@ -317,7 +317,6 @@ namespace 에라번역
             }
         }
         Stack<ChangeLog> back_logs = new Stack<ChangeLog>();
-        Translate trans = new Translate();
         Thread logthread;
         private Setting setting;
         private bool Init = true;

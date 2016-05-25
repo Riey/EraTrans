@@ -16,7 +16,7 @@ namespace 에라번역
         private BinaryFormatter formatter = new BinaryFormatter();
         private Setting setting;
 
-        public Main_Form(string[] args)
+        public Main_Form()
         {
             if (!Directory.Exists(Application.StartupPath+"\\Res"))
                 Directory.CreateDirectory(Application.StartupPath + "\\Res");
@@ -26,10 +26,6 @@ namespace 에라번역
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             VersionText.Text = "Version:  ";
             VersionText.Text += v.Major + "." + v.Minor + "." + v.Build;
-            if (args.Length!=0)
-            {
-                Translate(args);
-            }
         }
         private void 파일열기버튼_Click(object sender, EventArgs e)
         {

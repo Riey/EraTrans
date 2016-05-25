@@ -81,10 +81,6 @@ namespace 인코딩_일괄변환
                     Console.WriteLine(e.Message);
                 }
             });
-            while (!result.IsCompleted)
-            {
-                Task.Delay(200);
-            }
             Console.WriteLine("변환작업이 완료되었습니다.");
             Console.Read();
         }

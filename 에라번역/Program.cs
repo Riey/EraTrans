@@ -13,7 +13,9 @@ namespace 에라번역
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main_Form(args));
+            Fillter.Trans.Initializing();
+            Application.Run(new Main_Form());
+            Fillter.Trans.Destory();
         }
     }
 }

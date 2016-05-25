@@ -14,16 +14,14 @@ namespace 에라번역
     public partial class Change_Form : Form
     {
         public static string TranslatedText = null;
-        Translate Translate;
         string line;
         string original;
         bool exit = false;
-        public Change_Form(NodeInfo item, Translate Translate)
+        public Change_Form(NodeInfo item)
         {
             TranslatedText = null;
             line = item.erb_filename + "\r\n" + item.line + "번째줄";
             original = item.info.str;
-            this.Translate = Translate;
             InitializeComponent();
         }
 
@@ -63,7 +61,7 @@ namespace 에라번역
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
-            Translated_Text.Text = Translate.번역(Original_Text.Text);
+            Translated_Text.Text = Trans.GetString(Original_Text.Text);
         }
         private void 종료버튼_Click(object sender, EventArgs e)
         {

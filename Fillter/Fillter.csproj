@@ -63,7 +63,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -73,7 +73,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -91,30 +91,20 @@
   <ItemGroup>
     <Compile Include="ERB_Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Translate.cs" />
+    <Compile Include="Trans.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ohbbhlp.dll">
+    <Content Include="EZTrans.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF NOT EXIST "$(SolutionDir)\에라번역\bin\$(PlatformName)\$(ConfigurationName)\DLL" md "$(SolutionDir)\에라번역\bin\$(PlatformName)\$(ConfigurationName)\DLL"
-IF NOT EXIST "C:\에라번역\에라번역\" md "C:\에라번역\에라번역\"
-IF NOT EXIST "C:\에라번역\에라번역\DLL" md "C:\에라번역\에라번역\DLL"
-copy "$(TargetDir)\Fillter.dll" "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)\ohbbhlp.dll" "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)\License.txt" "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)\Fillter.dll" "$(SolutionDir)\에라번역\bin\$(PlatformName)\$(ConfigurationName)\DLL"
-copy "$(TargetDir)\ohbbhlp.dll" "$(SolutionDir)\에라번역\bin\$(PlatformName)\$(ConfigurationName)\DLL"
-copy "$(TargetDir)\License.txt" "$(SolutionDir)\에라번역\bin\$(PlatformName)\$(ConfigurationName)\DLL"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

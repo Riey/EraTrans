@@ -227,7 +227,7 @@
     <ProjectReference Include="..\Fillter\Fillter.csproj">
       <Project>{189b1679-6c67-41b5-b4b0-2dbd132fe22b}</Project>
       <Name>Fillter</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -235,8 +235,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)에라번역.exe" "C:\에라번역\에라번역\"
-copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\에라번역\"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)Fillter.dll" "$(TargetDir)DLL\"
+copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
+IF NOT EXIST "C:\에라번역\에라번역\DLL\" MD "C:\에라번역\에라번역\DLL\"
+copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
+copy "$(TargetDir)에라번역.exe" "C:\에라번역\에라번역\"
+copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\에라번역\"
+copy "$(TargetDir)Fillter.dll" "C:\에라번역\에라번역\DLL\"
+copy "$(TargetDir)EZTrans.dll" "C:\에라번역\에라번역\DLL\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
