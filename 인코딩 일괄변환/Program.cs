@@ -86,7 +86,11 @@ namespace 인코딩_일괄변환
         }
         static FileInfo[] GetFiles(DirectoryInfo info)
         {
-            List<FileInfo> files = new List<FileInfo>(info.GetFiles("*.*").Where(f=>f.Extension.ToUpper()==".ERB"|| f.Extension.ToUpper() ==".CSV"|| f.Extension.ToUpper() =="*.ERH"));
+            List<FileInfo> files = new List<FileInfo>(info.GetFiles("*.*").Where(
+                f => {
+                    return f.Extension.ToUpper() == ".ERB" || f.Extension.ToUpper() == ".CSV" || f.Extension.ToUpper() == ".ERH";
+            }
+                ));
             DirectoryInfo[] dirs = info.GetDirectories();
             if (dirs.Length > 0)
             {
