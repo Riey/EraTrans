@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
+using System.Text;
+
 namespace 에라번역
 {
     static class Program
@@ -13,9 +16,19 @@ namespace 에라번역
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Fillter.Trans.Initializing();
-            Application.Run(new Main_Form());
-            Fillter.Trans.Destory();
+            try
+            {
+                Fillter.Trans.Initializing();
+                Application.Run(new Main_Form());
+                Fillter.Trans.Destory();
+            }
+            catch (Exception e)
+            {
+                FileStream fs = new FileStream(Application.StartupPath + "\\log.dat", FileMode.Create);
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
+                fs.Flush();
+                fs.Dispose();
+            }
         }
     }
 }
