@@ -238,11 +238,17 @@
     <PostBuildEvent>copy "$(TargetDir)Fillter.dll" "$(TargetDir)DLL\"
 copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
 IF NOT EXIST "C:\에라번역\에라번역\DLL\" MD "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
+MD "C:\에라번역\EraTrans\DLL\"
 copy "$(TargetDir)에라번역.exe" "C:\에라번역\에라번역\"
 copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\에라번역\"
 copy "$(TargetDir)Fillter.dll" "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)EZTrans.dll" "C:\에라번역\에라번역\DLL\"</PostBuildEvent>
+copy "$(TargetDir)EZTrans.dll" "C:\에라번역\에라번역\DLL\"
+copy "$(TargetDir)에라번역.exe" "C:\에라번역\EraTrans\"
+copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\EraTrans\"
+copy "$(TargetDir)Fillter.dll" "C:\에라번역\EraTrans\DLL\"
+copy "$(TargetDir)EZTrans.dll" "C:\에라번역\EraTrans\DLL\"
+IF EXIST "C:\에라번역\EraTrans.7z" del "C:\에라번역\EraTrans.7z"
+7z a "C:\에라번역\EraTrans.7z" "C:\에라번역\EraTrans\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

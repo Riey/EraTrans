@@ -41,7 +41,6 @@
             this.새로고침버튼 = new System.Windows.Forms.Button();
             this.전체줄수 = new System.Windows.Forms.TextBox();
             this.자동번역버튼 = new System.Windows.Forms.Button();
-            this.빈줄표시 = new System.Windows.Forms.CheckBox();
             this.word_list = new TreeViewMS.TreeViewMS();
             this.SuspendLayout();
             // 
@@ -187,18 +186,6 @@
             this.자동번역버튼.UseVisualStyleBackColor = true;
             this.자동번역버튼.Click += new System.EventHandler(this.자동번역버튼_Click);
             // 
-            // 빈줄표시
-            // 
-            this.빈줄표시.AutoSize = true;
-            this.빈줄표시.Location = new System.Drawing.Point(1113, 583);
-            this.빈줄표시.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.빈줄표시.Name = "빈줄표시";
-            this.빈줄표시.Size = new System.Drawing.Size(74, 19);
-            this.빈줄표시.TabIndex = 18;
-            this.빈줄표시.Text = "빈줄표시";
-            this.빈줄표시.UseVisualStyleBackColor = true;
-            this.빈줄표시.CheckedChanged += new System.EventHandler(this.빈줄표시_CheckedChanged);
-            // 
             // word_list
             // 
             this.word_list.Font = new System.Drawing.Font("맑은 고딕", 12F);
@@ -219,7 +206,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1236, 890);
             this.Controls.Add(this.word_list);
-            this.Controls.Add(this.빈줄표시);
             this.Controls.Add(this.자동번역버튼);
             this.Controls.Add(this.전체줄수);
             this.Controls.Add(this.새로고침버튼);
@@ -258,7 +244,6 @@
         private System.Windows.Forms.Button 새로고침버튼;
         private System.Windows.Forms.TextBox 전체줄수;
         private System.Windows.Forms.Button 자동번역버튼;
-        private System.Windows.Forms.CheckBox 빈줄표시;
         private TreeViewMS.TreeViewMS word_list;
     }
 }

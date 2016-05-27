@@ -4,12 +4,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "에라번역", "에라번역\에라번역.csproj", "{2BFBDD4D-1A53-40C3-A23F-BF8149E994F9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EEA66764-C099-45A4-8EB4-E31B22671E5A} = {EEA66764-C099-45A4-8EB4-E31B22671E5A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fillter", "Fillter\Fillter.csproj", "{189B1679-6C67-41B5-B4B0-2DBD132FE22B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B944039B-3953-43E4-9D6C-44884F9EACA2} = {B944039B-3953-43E4-9D6C-44884F9EACA2}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "인코딩 일괄변환", "인코딩 일괄변환\인코딩 일괄변환.csproj", "{EEA66764-C099-45A4-8EB4-E31B22671E5A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B944039B-3953-43E4-9D6C-44884F9EACA2} = {B944039B-3953-43E4-9D6C-44884F9EACA2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "로그분석", "로그분석\로그분석.csproj", "{B944039B-3953-43E4-9D6C-44884F9EACA2}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -55,6 +69,18 @@ Global
 		{EEA66764-C099-45A4-8EB4-E31B22671E5A}.Release|x64.Build.0 = Release|x64
 		{EEA66764-C099-45A4-8EB4-E31B22671E5A}.Release|x86.ActiveCfg = Release|x86
 		{EEA66764-C099-45A4-8EB4-E31B22671E5A}.Release|x86.Build.0 = Release|x86
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|x64.Build.0 = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Debug|x86.Build.0 = Debug|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x64.ActiveCfg = Release|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x64.Build.0 = Release|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x86.ActiveCfg = Release|Any CPU
+		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

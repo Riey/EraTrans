@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Fillter;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace 에라번역
 {
@@ -80,10 +81,13 @@ namespace 에라번역
                 Top = word_list.TopNode;
             }
             word_list.Nodes.Clear();
+            var erbNodes = new Dictionary<string, TreeNode>();
             foreach (var parser in parsers)
             {
                 var items = parser.Value.dic.Where(item =>
                 {
+                    if (string.IsNullOrWhiteSpace(item.Value.str))
+                        return false;
                     if (!((korean_cb.CheckState == CheckState.Unchecked && item.Value.Korean) || (japanese_cb.CheckState == CheckState.Unchecked && item.Value.Japanese) || (!etc_cb.Checked && !item.Value.Korean && !item.Value.Japanese)))
                     {
                         if (korean_cb.CheckState == CheckState.Unchecked && !item.Value.Korean)
@@ -96,50 +100,42 @@ namespace 에라번역
                             return true;
                     }
                     return true;
-                }).Where(item =>
-                {
-                    return !(string.IsNullOrWhiteSpace(item.Value.str) && !빈줄표시.Checked);
                 }).Select(item => new NodeInfo(item.Key, parser.Key, item.Value)).ToArray();
+                var erbNode = new TreeNode(parser.Key.Split('\\').Last());
+                erbNode.Name = parser.Key;
+                erbNode.Tag = "ERB";
+                erbNodes.Add(erbNode.Name, erbNode);
                 foreach (var item in items)
                 {
-                    if (!word_list.Nodes.ContainsKey(item.erb_name))
-                    {
-                        TreeNode erbNode = new TreeNode(item.erb_filename);
-                        erbNode.Name = item.erb_name;
-                        erbNode.Tag = "ERB";
-                        word_list.Nodes.Add(erbNode);
-                    }
-                    var erb_node = word_list.Nodes.Find(item.erb_name, false).First();
                     var node = new TreeNode();
                     node.Tag = item;
                     node.Text = item.GetString(setting.LineSetting);
                     if (item.info.IsList)
                     {
-                        if (!erb_node.Nodes.ContainsKey("DATALIST|" + item.info.parent_line))
+                        if (!erbNode.Nodes.ContainsKey("DATALIST|" + item.info.parent_line))
                         {
                             TreeNode listNode = new TreeNode(LineSetting.GetLine(item.info.parent_line, " DATALIST", LineSetting));
                             listNode.Name = "DATALIST|" + item.info.parent_line;
                             listNode.Tag = "LIST";
-                            erb_node.Nodes.Add(listNode);
+                            erbNode.Nodes.Add(listNode);
                         }
-                        var list_node = erb_node.Nodes.Find("DATALIST|" + item.info.parent_line, false).First();
+                        var list_node = erbNode.Nodes.Find("DATALIST|" + item.info.parent_line, false).First();
                         list_node.Nodes.Add(node);
                     }
                     else
                     {
-                        erb_node.Nodes.Add(node);
+                        erbNode.Nodes.Add(node);
                     }
                 }
             }
+            foreach(var extend in extends)
+            {
+                erbNodes[extend].Expand();
+            }
+            word_list.Nodes.AddRange(erbNodes.Values.ToArray());
             if (Top != null)
             {
                 word_list.TopNode = word_list.Nodes.Find(Top.Name, true).First();
-            }
-            foreach(var extend in extends)
-            {
-                var search = word_list.Nodes.Find(extend, false);
-                if (search.Length > 0)
-                    search.First().Expand();
             }
         }
         private void 번역버튼_Click(object sender, EventArgs e)
@@ -177,10 +173,10 @@ namespace 에라번역
         }
         private void Save()
         {
-            foreach (var parser in parsers)
+            Parallel.ForEach(parsers, parser =>
             {
-                parser.Value.Save(); 
-            }
+                parser.Value.Save();
+            });
             MessageBox.Show("저장완료!");
             changed = false;
         }

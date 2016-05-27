@@ -27,8 +27,6 @@ namespace Fillter
             {
                 info.CopyTo(Application.StartupPath + "\\Backup\\" + info.Name);
             }
-            erb_dic = info.Directory;
-            //해쉬값을 얻음
             using (fs = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 using (StreamReader reader = encoding != null ? new StreamReader(fs, encoding) : new StreamReader(fs, true))
@@ -197,7 +195,6 @@ namespace Fillter
         public List<string> ERB = new List<string>();
         public Dictionary<int, LineInfo> dic = new Dictionary<int, LineInfo>();
         public Dictionary<int, string> _dic = new Dictionary<int, string>();
-        public DirectoryInfo erb_dic;
         public string erb_path;
         public Encoding erb_encoding;
         FileStream fs;
