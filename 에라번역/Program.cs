@@ -18,7 +18,12 @@ namespace 에라번역
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {
-                Fillter.Trans.Initializing();
+                int result = Fillter.Trans.Init();
+                if (result != 0)
+                {
+                    MessageBox.Show("ezTransXP 로드 실패\nCode:" + result);
+                    return;
+                }
                 Application.Run(new Main_Form());
                 Fillter.Trans.Destory();
             }
