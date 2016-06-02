@@ -9,11 +9,11 @@ namespace Fillter
 {
     public class Trans
     {
-        [DllImport("Translate\\EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+        [DllImport("EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
         public extern static int Init(string eztransPath);
-        [DllImport("Translate\\EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        [DllImport("EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         extern static void Terminate();
-        [DllImport("Translate\\EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        [DllImport("EZTrans.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         extern static string Translate(string str);
         public static void Destory() => Terminate();
         public static string GetString(string str) => Translate(str);
