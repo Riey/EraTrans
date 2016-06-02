@@ -18,11 +18,36 @@ namespace 에라번역
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {
-                int result = Fillter.Trans.Init();
-                if (result != 0)
                 {
-                    MessageBox.Show("ezTransXP 로드 실패\nCode:" + result);
-                    return;
+                    if (!Directory.Exists(Application.StartupPath + "\\Res"))
+                        Directory.CreateDirectory(Application.StartupPath + "\\Res");
+                    if (!Directory.Exists(Application.StartupPath + "\\Backup"))
+                        Directory.CreateDirectory(Application.StartupPath + "\\Backup");
+                    string ezPath = "";
+                    if (!File.Exists(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                    {
+                        ResetEZTransPath();
+                    }
+                    while (true)
+                    {
+                        using (StreamReader reader = File.OpenText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                        {
+                            ezPath = reader.ReadLine();
+                        }
+                        if (Directory.Exists(ezPath))
+                            break;
+                        else
+                        {
+                            File.Delete(Application.StartupPath + "\\Res\\ezTransXP_Path.txt");
+                            ResetEZTransPath();
+                        }
+                    }
+                    int result = Fillter.Trans.Init(ezPath);
+                    if (result != 0)
+                    {
+                        MessageBox.Show("EZTransXP 로드에 실패하였습니다.\nCode: " + result);
+                        return;
+                    }
                 }
                 Application.Run(new Main_Form());
                 Fillter.Trans.Destory();
@@ -33,6 +58,19 @@ namespace 에라번역
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
                 fs.Flush();
                 fs.Dispose();
+            }
+        }
+        private static void ResetEZTransPath()
+        {
+            using (StreamWriter writer = File.CreateText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+            {
+                FolderBrowserDialog dialog = new FolderBrowserDialog();
+                dialog.RootFolder = Environment.SpecialFolder.ProgramFilesX86;
+                dialog.ShowNewFolderButton = true;
+                dialog.Description = "ezTrans XP가 설치된 경로를 선택해 주세요";
+                dialog.ShowDialog();
+                writer.WriteLine(dialog.SelectedPath);
+                writer.Flush();
             }
         }
     }

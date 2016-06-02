@@ -18,10 +18,6 @@ namespace 에라번역
 
         public Main_Form()
         {
-            if (!Directory.Exists(Application.StartupPath+"\\Res"))
-                Directory.CreateDirectory(Application.StartupPath + "\\Res");
-            if (!Directory.Exists(Application.StartupPath + "\\Backup"))
-                Directory.CreateDirectory(Application.StartupPath + "\\Backup");
             InitializeComponent();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             VersionText.Text = "Version:  ";
