@@ -25,11 +25,11 @@ namespace 에라번역
                 {
                     foreach (var parser in parsers)
                     {
-                        foreach(var item in parser.Value.dic)
+                        foreach(var item in parser.Value.StringDictionary)
                         {
-                            if (item.Value.str.Contains(원본.Text))
+                            if (item.Value.Str.Contains(원본.Text))
                             {
-                                item.Value.str = item.Value.str.Replace(원본.Text, 번역본.Text);
+                                item.Value.Str = item.Value.Str.Replace(원본.Text, 번역본.Text);
                                 logs.Push(new ChangeLog(parser.Key, 원본.Text, 번역본.Text));
                             }
                         }

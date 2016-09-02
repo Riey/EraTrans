@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using System.Text;
+using EZTrans;
 
 namespace 에라번역
 {
@@ -42,7 +41,7 @@ namespace 에라번역
                             ResetEZTransPath();
                         }
                     }
-                    int result = Fillter.Trans.Init(ezPath);
+                    int result = TranslateXP.Init(ezPath, false);
                     if (result != 0)
                     {
                         MessageBox.Show("EZTransXP 로드에 실패하였습니다.\nCode: " + result);
@@ -50,7 +49,7 @@ namespace 에라번역
                     }
                 }
                 Application.Run(new Main_Form());
-                Fillter.Trans.Destory();
+                TranslateXP.Terminate();
             }
             catch (Exception e)
             {

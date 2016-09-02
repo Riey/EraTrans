@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>인코딩_일괄변환</RootNamespace>
     <AssemblyName>인코딩 일괄변환</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -75,6 +75,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\cycle.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>인코딩_일괄변환.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

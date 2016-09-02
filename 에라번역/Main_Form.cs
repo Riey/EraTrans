@@ -48,7 +48,7 @@ namespace 에라번역
                     {
                         parser = new ERB_Parser(path);
                     }
-                    lock (this)
+                    lock (parsers)
                     {
                         parsers.Add(path, parser); 
                     }

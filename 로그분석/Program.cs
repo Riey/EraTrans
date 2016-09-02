@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
@@ -12,6 +8,8 @@ namespace 로그분석
     {
         static void Main(string[] args)
         {
+            if(args.Length == 0)
+                return;
             var formatter = new BinaryFormatter();
             string logPath = "";
             logPath = args[0];

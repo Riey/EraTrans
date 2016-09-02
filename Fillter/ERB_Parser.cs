@@ -17,7 +17,7 @@ namespace Fillter
         }
         public ERB_Parser(string erb_path,Encoding encoding)
         {
-            this.erb_path = erb_path;
+            this.ErbPath = erb_path;
             if (!File.Exists(erb_path))
             {
                 throw new FileNotFoundException();
@@ -27,11 +27,11 @@ namespace Fillter
             {
                 info.CopyTo(Application.StartupPath + "\\Backup\\" + info.Name);
             }
-            using (fs = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (FileStream ErbStream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                using (StreamReader reader = encoding != null ? new StreamReader(fs, encoding) : new StreamReader(fs, true))
+                StreamReader reader = encoding != null ? new StreamReader(ErbStream, encoding) : new StreamReader(ErbStream, true);
                 {
-                    erb_encoding = reader.CurrentEncoding;
+                    ErbEncoding = reader.CurrentEncoding;
                     int count = -1;
                     bool can_exit = false;
                     #region 해석스레드
@@ -52,31 +52,31 @@ namespace Fillter
                                     ERBInfo erbinfo = buffer.Dequeue();
                                     if (!erbinfo.DATA)
                                     {
-                                        string temp = erbinfo.text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
-                                        dic.Add(erbinfo.line, new LineInfo(erbinfo.text.Replace(temp, "")));
-                                        _dic.Add(erbinfo.line, temp);
+                                        string temp = erbinfo.Text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
+                                        StringDictionary.Add(erbinfo.Line, new LineInfo(erbinfo.Text.Replace(temp, "")));
+                                        NonStringDictionary.Add(erbinfo.Line, temp);
                                     }
                                     else
                                     {
-                                        foreach (var listinfo in erbinfo.data_list)
+                                        foreach (var listinfo in erbinfo.Data_list)
                                         {
-                                            for (int a = 1; a <= listinfo.forms.Length; a++)
+                                            for (int a = 1; a <= listinfo.Forms.Length; a++)
                                             {
-                                                if (listinfo.forms[a - 1].Contains("DATAFORM"))
+                                                if (listinfo.Forms[a - 1].Contains("DATAFORM"))
                                                 {
-                                                    string[] line = listinfo.forms[a - 1].Split(new string[] { "DATAFORM" }, StringSplitOptions.None);
+                                                    string[] line = listinfo.Forms[a - 1].Split(new string[] { "DATAFORM" }, StringSplitOptions.None);
                                                     string _str = line[0] + "DATAFORM";
                                                     string str = line[1] ?? "";
-                                                    dic.Add(listinfo.line + a, new LineInfo(str, listinfo.line));
-                                                    _dic.Add(listinfo.line + a, _str);
+                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line));
+                                                    NonStringDictionary.Add(listinfo.Line + a, _str);
                                                 }
-                                                else if (listinfo.forms[a - 1].Contains("DATA"))
+                                                else if (listinfo.Forms[a - 1].Contains("DATA"))
                                                 {
-                                                    string[] line = listinfo.forms[a - 1].Split(new string[] { "DATA" }, StringSplitOptions.None);
+                                                    string[] line = listinfo.Forms[a - 1].Split(new string[] { "DATA" }, StringSplitOptions.None);
                                                     string _str = line[0] + "DATA";
                                                     string str = line[1] ?? "";
-                                                    dic.Add(listinfo.line + a, new LineInfo(str, listinfo.line));
-                                                    _dic.Add(listinfo.line + a, _str);
+                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line));
+                                                    NonStringDictionary.Add(listinfo.Line + a, _str);
                                                 }
                                                 else
                                                 {
@@ -95,7 +95,7 @@ namespace Fillter
                     {
                         string temp = reader.ReadLine();
                         count++;
-                        ERB.Add(temp);//원본 저장
+                        OriginalTexts.Add(temp);//원본 저장
                         temp = temp.Contains(';') ? temp.Substring(0, temp.IndexOf(';')) : temp;//주석제거
                         if (temp.Contains("PRINT"))
                         {
@@ -110,7 +110,7 @@ namespace Fillter
                                 {
                                     temp = reader.ReadLine();
                                     count++;
-                                    ERB.Add(temp);
+                                    OriginalTexts.Add(temp);
                                     switch (temp.Split(' ')[0].Trim())
                                     {
                                         case ("DATALIST"):
@@ -176,91 +176,247 @@ namespace Fillter
         Queue<ERBInfo> buffer = new Queue<ERBInfo>();
         public void Save()
         {
-            fs = new FileStream(erb_path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
-            StreamWriter writer = new StreamWriter(fs, erb_encoding);
-            foreach (var a in dic)
+            var ErbStream = new FileStream(ErbPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+            using(StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
             {
-                string temp = _dic[a.Key] + a.Value.str;
-                ERB[a.Key] = temp;
+                foreach(var a in StringDictionary)
+                {
+                    string temp = NonStringDictionary[a.Key] + a.Value.Str;
+                    OriginalTexts[a.Key] = temp;
+                }
+                foreach(var a in OriginalTexts)
+                {
+                    writer.WriteLine(a);
+                }
+                writer.Flush();
             }
-            foreach (var a in ERB)
+        }
+        private List<string> originalTexts = new List<string>();
+        private Dictionary<int, LineInfo> stringDictionary = new Dictionary<int, LineInfo>();
+        private Dictionary<int, string> nonStringDictionary = new Dictionary<int, string>();
+        private string erbPath;
+        private Encoding erbEncoding;
+
+        public List<string> OriginalTexts
+        {
+            get
             {
-                writer.WriteLine(a);
+                return originalTexts;
             }
-            writer.Flush();
-            writer.Close();
-            fs.Close();
-            fs.Dispose();
+
+            set
+            {
+                originalTexts = value;
+            }
         }
-        public List<string> ERB = new List<string>();
-        public Dictionary<int, LineInfo> dic = new Dictionary<int, LineInfo>();
-        public Dictionary<int, string> _dic = new Dictionary<int, string>();
-        public string erb_path;
-        public Encoding erb_encoding;
-        FileStream fs;
-    }
-    class DataListInfo
-    {
-        public string[] forms { get; }
-        public int line { get; }
-        public DataListInfo(string[] forms, int line)
+
+        public Dictionary<int, LineInfo> StringDictionary
         {
-            this.forms = forms;
-            this.line = line;
-            //line:부모줄번호
+            get
+            {
+                return stringDictionary;
+            }
+
+            set
+            {
+                stringDictionary = value;
+            }
         }
-    }
-    class ERBInfo
-    {
-        public string text;
-        public int line;
-        public bool DATA;
-        public List<DataListInfo> data_list;
-        public ERBInfo(string text, int line)
+
+        public Dictionary<int, string> NonStringDictionary
         {
-            this.text = text;
-            this.line = line;
-            DATA = false;
+            get
+            {
+                return nonStringDictionary;
+            }
+
+            set
+            {
+                nonStringDictionary = value;
+            }
         }
-        public ERBInfo(List<DataListInfo> data_list)
+
+        public string ErbPath
         {
-            this.data_list = data_list;
-            DATA = true;
+            get
+            {
+                return erbPath;
+            }
+
+            set
+            {
+                erbPath = value;
+            }
+        }
+
+        public Encoding ErbEncoding
+        {
+            get
+            {
+                return erbEncoding;
+            }
+
+            set
+            {
+                erbEncoding = value;
+            }
+        }
+
+        class DataListInfo
+        {
+            public string[] Forms { get; }
+            public int Line { get; }
+            public DataListInfo(string[] forms, int line)
+            {
+                Forms = forms;
+                Line = line;
+                //line:부모줄번호
+            }
+        }
+        class ERBInfo
+        {
+            private string text;
+            private int line;
+            private bool dATA;
+            private List<DataListInfo> data_list;
+
+            public string Text
+            {
+                get
+                {
+                    return text;
+                }
+
+                set
+                {
+                    text = value;
+                }
+            }
+
+            public int Line
+            {
+                get
+                {
+                    return line;
+                }
+
+                set
+                {
+                    line = value;
+                }
+            }
+
+            public bool DATA
+            {
+                get
+                {
+                    return dATA;
+                }
+
+                set
+                {
+                    dATA = value;
+                }
+            }
+
+            public List<DataListInfo> Data_list
+            {
+                get
+                {
+                    return data_list;
+                }
+
+                set
+                {
+                    data_list = value;
+                }
+            }
+
+            public ERBInfo(string text, int line)
+            {
+                this.Text = text;
+                this.Line = line;
+                DATA = false;
+            }
+            public ERBInfo(List<DataListInfo> data_list)
+            {
+                this.Data_list = data_list;
+                DATA = true;
+            }
         }
     }
     public class LineInfo
     {
-        public bool IsList;
-        public bool Korean;
-        public bool Japanese;
-        private string p_str;
-        public string str
+        private bool isList;
+        private bool korean;
+        private bool japanese;
+        private string str;
+        private int parent_line;
+
+        public string Str
         {
             get
             {
-                return p_str;
+                return str;
             }
             set
             {
-                p_str = value;
-                GetLang.Get(value, out Korean, out Japanese);
+                str = value;
+                GetLang.Get(value, out korean, out japanese);
             }
         }
-        public int parent_line;
+
+        public bool IsList
+        {
+            get
+            {
+                return isList;
+            }
+        }
+
+        public bool Korean
+        {
+            get
+            {
+                return korean;
+            }
+        }
+
+        public bool Japanese
+        {
+            get
+            {
+                return japanese;
+            }
+        }
+
+        public int Parent_line
+        {
+            get
+            {
+                return parent_line;
+            }
+
+            set
+            {
+                parent_line = value;
+            }
+        }
+
         public LineInfo(string str)
         {
-            this.str = str;
-            IsList = false;
+            Str = str;
+            isList = false;
         }
         public LineInfo(string str, int parent_line)
         {
             //parent_line 부모 DATALIST의 줄수이며 이것으로 같은 FORM인지 구분
-            this.str = str;
-            this.parent_line = parent_line;
-            IsList = true;
+            Str = str;
+            Parent_line = parent_line;
+            isList = true;
         }
     }
-    class GetLang
+    static class GetLang
     {
         public static void Get(string str, out bool Korean, out bool Japanese)
         {

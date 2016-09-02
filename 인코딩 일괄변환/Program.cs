@@ -53,34 +53,30 @@ namespace 인코딩_일괄변환
                 }
             }
             var files = GetFiles(new DirectoryInfo(args[0]));
-            var result=Parallel.ForEach(files, file =>
-            {
-                try
-                {
-                    string text = "";
-                    using (FileStream fs = file.Open(FileMode.Open, FileAccess.Read))
-                    {
-                        using (StreamReader reader = new StreamReader(fs, original))
-                        {
-                            text = reader.ReadToEnd();
-                        }
-                    }
-                    file.Delete();
-                    using (FileStream fs = file.Create())
-                    {
-                        using(StreamWriter writer=new StreamWriter(fs, target))
-                        {
-                            writer.Write(text);
-                            writer.Flush();
-                        }
-                    }
-                    Console.WriteLine(file.Name + " 완료");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
+            var result = Parallel.ForEach(files, file =>
+              {
+                  try
+                  {
+                      string text = "";
+                      using(FileStream fs = file.Open(FileMode.Open, FileAccess.Read))
+                      {
+                          StreamReader reader = new StreamReader(fs, original);
+                          text = reader.ReadToEnd();
+                      }
+                      file.Delete();
+                      using(FileStream fs = file.Create())
+                      {
+                          StreamWriter writer = new StreamWriter(fs, target);
+                          writer.Write(text);
+                          writer.Flush();
+                      }
+                      Console.WriteLine(file.Name + " 완료");
+                  }
+                  catch(Exception e)
+                  {
+                      Console.WriteLine(e.Message);
+                  }
+              });
             Console.WriteLine("변환작업이 완료되었습니다.");
             Console.Read();
         }

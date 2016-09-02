@@ -15,7 +15,6 @@ namespace 에라번역
         public CheckState etcCB;
         public LineSetting LineSetting;
         public AuthorSetting AuthorSetting;
-        public Setting() { }
         public Setting(CheckState KoreanCB, CheckState JapaneseCB, CheckState etcCB, LineSetting LineSetting,AuthorSetting AuthorSetting)
         {
             this.KoreanCB = KoreanCB;

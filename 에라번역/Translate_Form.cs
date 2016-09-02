@@ -1,17 +1,21 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Threading;
+﻿using EZTrans;
 using Fillter;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace 에라번역
 {
     public partial class Translate_Form : Form
     {
+        #region Const Value
+        private const string ERB_TAG = "ERB";
+        private const string LIST_TAG = "LIST";
+        #endregion
         public Translate_Form(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
         {
             this.parsers = parsers;
@@ -25,101 +29,126 @@ namespace 에라번역
             korean_cb.CheckState = setting.KoreanCB;
             japanese_cb.CheckState = setting.JapaneseCB;
             etc_cb.CheckState = setting.etcCB;
-            LineSetting = setting.LineSetting;
-            logthread = new Thread(() =>
-            {
-                Action<Button, bool> method = (Button btn, bool enable) => { btn.Enabled = enable; };
-                try
-                {
-                    while (true)
-                    {
-
-                        if (p_logs.Count > 0)
-                        {
-                            Invoke(new LogHandler(method), new object[] { 실행취소버튼, true });
-                        }
-                        else
-                        {
-                            Invoke(new LogHandler(method), new object[] { 실행취소버튼, false });
-                        }
-                        if (back_logs.Count > 0)
-                        {
-                            Invoke(new LogHandler(method), new object[] { 다시실행버튼, true });
-                        }
-                        else
-                        {
-                            Invoke(new LogHandler(method), new object[] { 다시실행버튼, false });
-                        }
-                        Thread.Sleep(200);
-                    }
-
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-            });
-            logthread.Start();
+            currentLineSetting = setting.LineSetting;
+            logWatcher = new Thread(CheckLog);
+            logWatcher.Start();
             word_update();
             Init = false;
+            int line = GetLineCount();
+            전체줄수.Text = line.ToString() + "줄";
+        }
+
+        private void CheckLog()
+        {
+            Action<Button, bool> method = (Button btn, bool enable) => { btn.Enabled = enable; };
+            try
+            {
+                while(true)
+                {
+
+                    if(_logs.Count > 0)
+                    {
+                        Invoke(new CheckLogHandler(method), 실행취소버튼, true);
+                    }
+                    else
+                    {
+                        Invoke(new CheckLogHandler(method), 실행취소버튼, false);
+                    }
+                    if(back_logs.Count > 0)
+                    {
+                        Invoke(new CheckLogHandler(method), 다시실행버튼, true);
+                    }
+                    else
+                    {
+                        Invoke(new CheckLogHandler(method), 다시실행버튼, false);
+                    }
+                    Thread.Sleep(200);
+                }
+
+            }
+            catch(ObjectDisposedException)
+            {
+                return;
+            }
+        }
+
+        private int GetLineCount()
+        {
             int line = 0;
-            foreach (TreeNode erb_node in word_list.Nodes)
+            foreach(TreeNode erb_node in word_list.Nodes)
             {
                 foreach(TreeNode node in erb_node.Nodes)
                 {
                     line += node.Nodes.Count == 0 ? 1 : node.Nodes.Count;
                 }
             }
-            전체줄수.Text = line.ToString() + "줄";
+
+            return line;
+        }
+
+        private bool IsVaildLine(LineInfo lineInfo)
+        {
+            if(string.IsNullOrWhiteSpace(lineInfo.Str))
+                return false;
+            if(!((korean_cb.CheckState == CheckState.Unchecked && lineInfo.Korean) || (japanese_cb.CheckState == CheckState.Unchecked && lineInfo.Japanese) || (!etc_cb.Checked && !lineInfo.Korean && !lineInfo.Japanese)))
+            {
+                if(korean_cb.CheckState == CheckState.Unchecked && !lineInfo.Korean)
+                    return false;
+                if(japanese_cb.CheckState == CheckState.Unchecked && !lineInfo.Japanese)
+                    return false;
+                if((korean_cb.Checked && lineInfo.Korean) || (japanese_cb.Checked && lineInfo.Japanese))
+                    return true;
+                if((korean_cb.CheckState == CheckState.Indeterminate && lineInfo.Korean) || (japanese_cb.CheckState == CheckState.Indeterminate && lineInfo.Japanese))
+                    return true;
+            }
+            return true;
         }
         private void word_update()
         {
-            TreeNode Top = null;
-            var extends = word_list.Nodes.Cast<TreeNode>().Where(node => node.IsExpanded).Select(node=>node.Name).ToArray();
-            if (word_list.TopNode != null)
-            {
-                Top = word_list.TopNode;
-            }
+            TreeNode Top = word_list.TopNode;
+            var extends = word_list.Nodes.Cast<TreeNode>().Where(node => node.IsExpanded).Select(node => node.Name).ToArray();
             word_list.Nodes.Clear();
             var erbNodes = new Dictionary<string, TreeNode>();
-            foreach (var parser in parsers)
+            AddErbNodes(erbNodes);
+            foreach(var extend in extends)
             {
-                var items = parser.Value.dic.Where(item =>
-                {
-                    if (string.IsNullOrWhiteSpace(item.Value.str))
-                        return false;
-                    if (!((korean_cb.CheckState == CheckState.Unchecked && item.Value.Korean) || (japanese_cb.CheckState == CheckState.Unchecked && item.Value.Japanese) || (!etc_cb.Checked && !item.Value.Korean && !item.Value.Japanese)))
-                    {
-                        if (korean_cb.CheckState == CheckState.Unchecked && !item.Value.Korean)
-                            return false;
-                        if (japanese_cb.CheckState == CheckState.Unchecked && !item.Value.Japanese)
-                            return false;
-                        if ((korean_cb.Checked && item.Value.Korean) || (japanese_cb.Checked && item.Value.Japanese))
-                            return true;
-                        if ((korean_cb.CheckState == CheckState.Indeterminate && item.Value.Korean) || (japanese_cb.CheckState == CheckState.Indeterminate && item.Value.Japanese))
-                            return true;
-                    }
-                    return true;
-                }).Select(item => new NodeInfo(item.Key, parser.Key, item.Value)).ToArray();
+                erbNodes[extend].Expand();
+            }
+            word_list.Nodes.AddRange(erbNodes.Values.ToArray());
+            if(Top != null)
+            {
+                word_list.TopNode = word_list.Nodes.Find(Top.Name, true).First();
+            }
+        }
+
+        private void AddErbNodes(Dictionary<string, TreeNode> erbNodes)
+        {
+            foreach(var parser in parsers)
+            {
                 var erbNode = new TreeNode(parser.Key.Split('\\').Last());
                 erbNode.Name = parser.Key;
-                erbNode.Tag = "ERB";
+                erbNode.Tag = ERB_TAG;
                 erbNodes.Add(erbNode.Name, erbNode);
-                foreach (var item in items)
+                foreach(var lineInfo in parser.Value.StringDictionary)
                 {
-                    var node = new TreeNode();
-                    node.Tag = item;
-                    node.Text = item.GetString(setting.LineSetting);
-                    if (item.info.IsList)
+                    if(!IsVaildLine(lineInfo.Value))
                     {
-                        if (!erbNode.Nodes.ContainsKey("DATALIST|" + item.info.parent_line))
+                        continue;
+                    }
+                    var nodeInfo = new NodeInfo(lineInfo.Key, parser.Key, lineInfo.Value);
+                    var node = new TreeNode();
+                    node.Tag = nodeInfo;
+                    node.Text = nodeInfo.GetString(setting.LineSetting);
+                    if(nodeInfo.Info.IsList)
+                    {
+                        if(!erbNode.Nodes.ContainsKey("DATALIST|" + nodeInfo.Info.Parent_line))
                         {
-                            TreeNode listNode = new TreeNode(LineSetting.GetLine(item.info.parent_line, " DATALIST", LineSetting));
-                            listNode.Name = "DATALIST|" + item.info.parent_line;
-                            listNode.Tag = "LIST";
+                            TreeNode listNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.Info.Parent_line, " DATALIST"));
+                            listNode.Name = "DATALIST|" + nodeInfo.Info.Parent_line;
+                            listNode.Tag = LIST_TAG;
                             erbNode.Nodes.Add(listNode);
                         }
-                        var list_node = erbNode.Nodes.Find("DATALIST|" + item.info.parent_line, false).First();
+                        var list_node = erbNode.Nodes.Find("DATALIST|" + nodeInfo.Info.Parent_line, false).First();
                         list_node.Nodes.Add(node);
                     }
                     else
@@ -128,16 +157,8 @@ namespace 에라번역
                     }
                 }
             }
-            foreach(var extend in extends)
-            {
-                erbNodes[extend].Expand();
-            }
-            word_list.Nodes.AddRange(erbNodes.Values.ToArray());
-            if (Top != null)
-            {
-                word_list.TopNode = word_list.Nodes.Find(Top.Name, true).First();
-            }
         }
+
         private void 번역버튼_Click(object sender, EventArgs e)
         {
             if (word_list.SelectedNodes.Count == 0)
@@ -152,8 +173,8 @@ namespace 에라번역
                 cf.ShowDialog();
                 if (Change_Form.TranslatedText == null)
                     continue;
-                logs.Push(new ChangeLog(item.erb_name, item.info.str, Change_Form.TranslatedText));
-                parsers[item.erb_name].dic[item.line].str = Change_Form.TranslatedText;
+                logs.Push(new ChangeLog(item.ErbName, item.Info.Str, Change_Form.TranslatedText));
+                parsers[item.ErbName].StringDictionary[item.Line].Str = Change_Form.TranslatedText;
                 Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
@@ -190,7 +211,7 @@ namespace 에라번역
                     return;
                 }
             }
-            logthread.Abort();
+            logWatcher.Abort();
             GC.Collect();
         }
         private void 설정버튼_Click(object sender, EventArgs e)
@@ -211,7 +232,7 @@ namespace 에라번역
         {
             if (logs.Count > 0)
             {
-                back_logs.Push(ChangeLog.되돌리기(p_logs.Pop(), parsers));
+                back_logs.Push(ChangeLog.되돌리기(_logs.Pop(), parsers));
                     Refresh_Word();
                 changed = true;
             }
@@ -221,7 +242,7 @@ namespace 에라번역
         {
             if (back_logs.Count > 0)
             {
-                p_logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
+                _logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
                     Refresh_Word();
                 changed = true;
             }
@@ -287,33 +308,33 @@ namespace 에라번역
                 if (!(Node.Tag is NodeInfo))
                     continue;
                 var item = Node.Tag as NodeInfo;
-                if (string.IsNullOrWhiteSpace(item.info.str))
+                if (string.IsNullOrWhiteSpace(item.Info.Str))
                     continue;
-                string temp = Trans.GetString(item.info.str);
-                logs.Push(new ChangeLog(item.erb_name, item.line, item.info.str, temp));
-                item.info.str = temp;
+                string temp = TranslateXP.Translate(item.Info.Str);
+                logs.Push(new ChangeLog(item.ErbName, item.Line, item.Info.Str, temp));
+                item.Info.Str = temp;
                 Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
             changed = true;
         }
-        #region 필드
-        public delegate void LogHandler(Button btn, bool enable);
-        bool changed = false;
-        Dictionary<string,ERB_Parser> parsers;
-        string version;
-        LineSetting LineSetting;
-        Stack<ChangeLog> p_logs=new Stack<ChangeLog>();
-        Stack<ChangeLog> logs
+        #region Field
+        public delegate void CheckLogHandler(Button btn, bool enable);
+        private bool changed = false;
+        private Dictionary<string,ERB_Parser> parsers;
+        private string version;
+        private LineSetting currentLineSetting;
+        private Stack<ChangeLog> _logs=new Stack<ChangeLog>();
+        private Stack<ChangeLog> logs
         {
             get
             {
                 back_logs.Clear();
-                return p_logs;
+                return _logs;
             }
         }
-        Stack<ChangeLog> back_logs = new Stack<ChangeLog>();
-        Thread logthread;
+        private Stack<ChangeLog> back_logs = new Stack<ChangeLog>();
+        private Thread logWatcher;
         private Setting setting;
         private bool Init = true;
         #endregion
@@ -353,33 +374,16 @@ namespace 에라번역
         public int 줄번호 { get; }
         public string str1 { get; }
         public string str2 { get; }
-        public 행동 했던일;
-        public ChangeLog(string erb_name,int line, string 원본, string 번역본)
+        public 행동 했던일 { get; }
+        public ChangeLog(string erb_name,int line, string 원본, string 번역본):this(erb_name,line,원본,번역본,행동.번역)
         {
             //번역용 생성자
-            this.erb_name = erb_name;
-            줄번호 = line;
-            했던일 = 행동.번역;
-            str1 = 원본;
-            str2 = 번역본;
-            /*
-            삭제의 경우엔
-            str1:dic의 삭제된내용
-            str2:_dic의 삭제된내용
-
-            복원의 경우는
-            str1,str2가 존재하지않음
-            */
         }
-        public ChangeLog(string erb_name, string 원본, string 일괄번역본)
+        public ChangeLog(string erb_name, string 원본, string 일괄번역본) : this(erb_name, -1, 원본, 일괄번역본, 행동.일괄번역)
         {
             //일괄번역용 생성자
-            this.erb_name = erb_name;
-            했던일 = 행동.일괄번역;
-            str1 = 원본;
-            str2 = 일괄번역본;
         }
-        public ChangeLog(string erb_name, int 줄번호, string str1, string str2, 행동 했던일)
+        private ChangeLog(string erb_name, int 줄번호, string str1, string str2, 행동 했던일)
         {
             this.erb_name = erb_name;
             this.줄번호 = 줄번호;
@@ -419,20 +423,20 @@ namespace 에라번역
             {
                 case (행동.번역):
                     {
-                        parsers[log.erb_name].dic[log.줄번호].str = log.str1;
+                        parsers[log.erb_name].StringDictionary[log.줄번호].Str = log.str1;
                         cl = new ChangeLog(log.erb_name, log.줄번호, log.str2, log.str1);
                         break;
                     }
                 case (행동.일괄번역):
                     {
                         List<Tuple<int, string>> diclog = new List<Tuple<int, string>>();
-                        foreach (var temp in parsers[log.erb_name].dic)
+                        foreach (var temp in parsers[log.erb_name].StringDictionary)
                         {
-                            diclog.Add(new Tuple<int, string>(temp.Key, temp.Value.str.Replace(log.str2, log.str1)));
+                            diclog.Add(new Tuple<int, string>(temp.Key, temp.Value.Str.Replace(log.str2, log.str1)));
                         }
                         foreach (var temp in diclog)
                         {
-                            parsers[log.erb_name].dic[temp.Item1] = new LineInfo(temp.Item2);
+                            parsers[log.erb_name].StringDictionary[temp.Item1] = new LineInfo(temp.Item2);
                         }
                         cl = new ChangeLog(log.erb_name, log.str2, log.str1);
                         break;
@@ -443,83 +447,6 @@ namespace 에라번역
                     }
             }
             return cl;
-        }
-    }
-    [Serializable]
-    public class LineSetting
-    {
-        public string setting { get; set; }
-        public string[] str;
-        public LineSetting(string setting, string[] str)
-        {
-            this.setting = setting;
-            this.str = str;
-        }
-        public static LineSetting Default
-        {
-            get
-            {
-                return new LineSetting("LINENUM+str+LINETEXT", new string[] { "번째줄===>" });
-            }
-        }
-        public static string GetLine(int linenum, string linetext, LineSetting setting)
-        {
-            string result = "";
-            int count = 0;
-            foreach (string temp in setting.setting.Split('+'))
-            {
-                switch (temp)
-                {
-                    case ("LINENUM"):
-                        {
-                            result += linenum;
-                            break;
-                        }
-                    case ("LINETEXT"):
-                        {
-                            result += linetext;
-                            break;
-                        }
-                    case ("str"):
-                        {
-                            if (count <= setting.str.Length)
-                            {
-                                result += setting.str[count++];
-                            }
-                            break;
-                        }
-                }
-            }
-            return result;
-        }
-    }
-    public class NodeInfo
-    {
-        public int line;
-        public string erb_name;
-        public string erb_filename;
-        public string ID
-        {
-            get
-            {
-                return erb_name + "|" + line;
-            }
-        }
-        public override int GetHashCode()
-        {
-            return ID.GetHashCode();
-        }
-        public LineInfo info;
-        public string GetString(LineSetting setting)
-        {
-            return LineSetting.GetLine(line+1, info.str, setting);
-        }
-        public NodeInfo(int line,string erb_name, LineInfo info)
-        {
-            this.line = line;
-            this.erb_name = erb_name;
-            this.info = info;
-            erb_filename = erb_name.Split('\\').Last();
         }
     }
 }

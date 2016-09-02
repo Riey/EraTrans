@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Xml;
-using System.Net;
-using System.Text;
-using System.IO;
-using Fillter;
-using System.Security.Cryptography;
+using EZTrans;
 
 namespace 에라번역
 {
@@ -20,8 +14,8 @@ namespace 에라번역
         public Change_Form(NodeInfo item)
         {
             TranslatedText = null;
-            line = item.erb_filename + "\r\n" + item.line + "번째줄";
-            original = item.info.str;
+            line = item.ErbFileName + "\r\n" + item.Line + "번째줄";
+            original = item.Info.Str;
             InitializeComponent();
         }
 
@@ -61,7 +55,7 @@ namespace 에라번역
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
-            Translated_Text.Text = Trans.GetString(Original_Text.Text);
+            Translated_Text.Text = TranslateXP.Translate(Original_Text.Text);
         }
         private void 종료버튼_Click(object sender, EventArgs e)
         {

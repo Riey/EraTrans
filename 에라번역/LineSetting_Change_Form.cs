@@ -21,18 +21,18 @@ namespace 에라번역
 
         private void LineSetting_Form_Load(object sender, EventArgs e)
         {
-            Setting_Text.Text = setting.setting;
-            for(int i=0;i<setting.str.Length-1;i++)
+            Setting_Text.Text = setting.Setting;
+            for(int i=0;i<setting.Str.Length-1;i++)
             {
-                str_text.Text += setting.str[i] + ",";
+                str_text.Text += setting.Str[i] + ",";
             }
-            str_text.Text += setting.str.Last();
+            str_text.Text += setting.Str.Last();
         }
 
         private void 적용버튼_Click(object sender, EventArgs e)
         {
-            setting.setting = Setting_Text.Text;
-            setting.str = str_text.Text.Split(',');
+            setting.Setting = Setting_Text.Text;
+            setting.Str = str_text.Text.Split(',');
             Close();
         }
     }

@@ -10,10 +10,12 @@ namespace 에라번역
     {
         private Dictionary<string, ERB_Parser> parsers;
         private Setting setting;
+        private Encoding preEncoding;
         public 설정창(Setting setting, Dictionary<string, ERB_Parser> parsers)
         {
             this.setting = setting;
             this.parsers = parsers;
+            preEncoding = parsers.First().Value.ErbEncoding;
             InitializeComponent();
         }
 
@@ -31,30 +33,31 @@ namespace 에라번역
 
         private void 저장버튼_Click(object sender, EventArgs e)
         {
-            foreach (var parser in parsers)
+            Encoding encoding = null;
+            switch(인코딩설정.SelectedIndex)
             {
-                switch (인코딩설정.SelectedIndex)
+                case (0):
+                    {
+                        encoding = Encoding.UTF8;
+                        break;
+                    }
+                case (1):
+                    {
+                        encoding = Encoding.Unicode;
+                        break;
+                    }
+                case (2):
+                    {
+                        encoding = Encoding.UTF32;
+                        break;
+                    }
+            }
+            if(encoding != null)
+            {
+                foreach(var parser in parsers)
                 {
-                    case (0):
-                        {
-                            parser.Value.erb_encoding = Encoding.UTF8;
-                            break;
-                        }
-                    case (1):
-                        {
-                            parser.Value.erb_encoding = Encoding.Unicode;
-                            break;
-                        }
-                    case (2):
-                        {
-                            parser.Value.erb_encoding = Encoding.UTF32;
-                            break;
-                        }
-                    case (3):
-                        {
-                            break;
-                        }
-                } 
+                    parser.Value.ErbEncoding = encoding;
+                }
             }
             Close();
         }
@@ -62,21 +65,21 @@ namespace 에라번역
         private void 설정창_Load(object sender, EventArgs e)
         {
             인코딩설정.Items.AddRange(new string[] { "UTF-8", "UTF-16(Unicode)", "UTF-32" });
-            if (parsers.First().Value.erb_encoding == Encoding.UTF8)
+            if (preEncoding == Encoding.UTF8)
             {
                 인코딩설정.SelectedIndex = 0;
             }
-            else if (parsers.First().Value.erb_encoding == Encoding.Unicode)
+            else if (preEncoding == Encoding.Unicode)
             {
                 인코딩설정.SelectedIndex = 1;
             }
-            else if (parsers.First().Value.erb_encoding == Encoding.UTF32)
+            else if (preEncoding == Encoding.UTF32)
             {
                 인코딩설정.SelectedIndex = 2;
             }
             else
             {
-                인코딩설정.Items.Add(parsers.First().Value.erb_encoding.WebName);
+                인코딩설정.Items.Add(preEncoding.WebName);
                 인코딩설정.SelectedIndex = 1;
             }
         }
