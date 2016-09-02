@@ -124,6 +124,7 @@
     <Compile Include="Batch_Trans.Designer.cs">
       <DependentUpon>Batch_Trans.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChangeLog.cs" />
     <Compile Include="Change_Form.cs">
       <SubType>Form</SubType>
     </Compile>

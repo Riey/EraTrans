@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Fillter;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using Fillter;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace 에라번역
 {
@@ -237,7 +237,7 @@ namespace 에라번역
         {
             get
             {
-                return log1.줄번호;
+                return log1.LineNum;
             }
         }
         public string 한일
@@ -251,7 +251,7 @@ namespace 에라번역
         {
             get
             {
-                return log1.str1;
+                return log1.Str1;
             }
         }
         public ChangeLog log1;

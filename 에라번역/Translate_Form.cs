@@ -232,7 +232,7 @@ namespace 에라번역
         {
             if (logs.Count > 0)
             {
-                back_logs.Push(ChangeLog.되돌리기(_logs.Pop(), parsers));
+                back_logs.Push(ChangeLog.Back(_logs.Pop(), parsers));
                     Refresh_Word();
                 changed = true;
             }
@@ -242,7 +242,7 @@ namespace 에라번역
         {
             if (back_logs.Count > 0)
             {
-                _logs.Push(ChangeLog.되돌리기(back_logs.Pop(), parsers));
+                _logs.Push(ChangeLog.Back(back_logs.Pop(), parsers));
                     Refresh_Word();
                 changed = true;
             }
@@ -361,92 +361,6 @@ namespace 에라번역
         {
             this.이름 = 이름;
             설명 = "";
-        }
-    }
-    [Serializable]
-    public class ChangeLog
-    {
-        public enum 행동
-        {
-            번역, 일괄번역
-        }
-        public string erb_name { get; }
-        public int 줄번호 { get; }
-        public string str1 { get; }
-        public string str2 { get; }
-        public 행동 했던일 { get; }
-        public ChangeLog(string erb_name,int line, string 원본, string 번역본):this(erb_name,line,원본,번역본,행동.번역)
-        {
-            //번역용 생성자
-        }
-        public ChangeLog(string erb_name, string 원본, string 일괄번역본) : this(erb_name, -1, 원본, 일괄번역본, 행동.일괄번역)
-        {
-            //일괄번역용 생성자
-        }
-        private ChangeLog(string erb_name, int 줄번호, string str1, string str2, 행동 했던일)
-        {
-            this.erb_name = erb_name;
-            this.줄번호 = 줄번호;
-            this.str1 = str1;
-            this.str2 = str2;
-            this.했던일 = 했던일;
-        }
-        public static bool 같은가(ChangeLog log1, ChangeLog log2)
-        {
-            if (log1.erb_name != log2.erb_name)
-                return false;
-            if (log1.str1 == log2.str1 && log1.str2 == log2.str2 && log1.줄번호 == log2.줄번호 && log1.했던일 == log2.했던일)
-            {
-                return true;
-            }
-            return false;
-        }
-        public static ChangeLog 다시실행(ChangeLog log, Dictionary<string,ERB_Parser>parsers)
-        {
-            switch (log.했던일)
-            {
-                case (행동.번역):
-                    {
-                        return 되돌리기(new ChangeLog(log.erb_name, log.줄번호, log.str2, log.str1), parsers);
-                    }
-                case (행동.일괄번역):
-                    {
-                        return 되돌리기(new ChangeLog(log.erb_name, log.str2, log.str1), parsers);
-                    }
-            }
-            return null;
-        }
-        public static ChangeLog 되돌리기(ChangeLog log, Dictionary<string, ERB_Parser> parsers)
-        {
-            ChangeLog cl;
-            switch (log.했던일)
-            {
-                case (행동.번역):
-                    {
-                        parsers[log.erb_name].StringDictionary[log.줄번호].Str = log.str1;
-                        cl = new ChangeLog(log.erb_name, log.줄번호, log.str2, log.str1);
-                        break;
-                    }
-                case (행동.일괄번역):
-                    {
-                        List<Tuple<int, string>> diclog = new List<Tuple<int, string>>();
-                        foreach (var temp in parsers[log.erb_name].StringDictionary)
-                        {
-                            diclog.Add(new Tuple<int, string>(temp.Key, temp.Value.Str.Replace(log.str2, log.str1)));
-                        }
-                        foreach (var temp in diclog)
-                        {
-                            parsers[log.erb_name].StringDictionary[temp.Item1] = new LineInfo(temp.Item2);
-                        }
-                        cl = new ChangeLog(log.erb_name, log.str2, log.str1);
-                        break;
-                    }
-                default:
-                    {
-                        throw new ArgumentException("행동을 알수없습니다.");
-                    }
-            }
-            return cl;
         }
     }
 }
