@@ -27,8 +27,6 @@ namespace 에라번역
 
         public MainForm(string[] args):this()
         {
-            if (args.Length != 2)
-                throw new ArgumentOutOfRangeException(nameof(args));
             loadedFile = Tuple.Create(args[0], args[1]);
         }
 

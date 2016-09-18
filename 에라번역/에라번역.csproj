@@ -229,6 +229,10 @@
       <Project>{3724f839-bcc8-4eff-a177-ac8247660f94}</Project>
       <Name>EZTrans</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fillter\Fillter.csproj">
+      <Project>{189B1679-6C67-41B5-B4B0-2DBD132FE22B}</Project>
+      <Name>Fillter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Icon.ico" />

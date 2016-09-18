@@ -23,22 +23,27 @@ namespace 에라번역
                     if (!Directory.Exists(Application.StartupPath + "\\Backup"))
                         Directory.CreateDirectory(Application.StartupPath + "\\Backup");
                     string ezPath = "";
-                    if (!File.Exists(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                    if (args.Length > 2)
+                        ezPath = args[2];
+                    else
                     {
-                        ResetEZTransPath();
-                    }
-                    while (true)
-                    {
-                        using (StreamReader reader = File.OpenText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                        if (!File.Exists(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
                         {
-                            ezPath = reader.ReadLine();
-                        }
-                        if (Directory.Exists(ezPath))
-                            break;
-                        else
-                        {
-                            File.Delete(Application.StartupPath + "\\Res\\ezTransXP_Path.txt");
                             ResetEZTransPath();
+                        }
+                        while (true)
+                        {
+                            using (StreamReader reader = File.OpenText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                            {
+                                ezPath = reader.ReadLine();
+                            }
+                            if (Directory.Exists(ezPath))
+                                break;
+                            else
+                            {
+                                File.Delete(Application.StartupPath + "\\Res\\ezTransXP_Path.txt");
+                                ResetEZTransPath();
+                            }
                         }
                     }
                     int result = TranslateXP.Initialize(ezPath, false);
