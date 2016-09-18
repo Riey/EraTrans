@@ -10,13 +10,13 @@ using System.Windows.Forms;
 
 namespace 에라번역
 {
-    public partial class Translate_Form : Form
+    public partial class TranslateForm : Form
     {
         #region Const Value
         private const string ERB_TAG = "ERB";
         private const string LIST_TAG = "LIST";
         #endregion
-        public Translate_Form(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
+        public TranslateForm(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
         {
             this.parsers = parsers;
             this.version = version;
@@ -169,12 +169,12 @@ namespace 에라번역
                 if (!(Node.Tag is NodeInfo))
                     continue;
                 NodeInfo item = Node.Tag as NodeInfo;
-                Change_Form cf = new Change_Form(item);
+                ChangeForm cf = new ChangeForm(item);
                 cf.ShowDialog();
-                if (Change_Form.TranslatedText == null)
+                if (ChangeForm.TranslatedText == null)
                     continue;
-                logs.Push(new ChangeLog(item.ErbName, item.Info.Str, Change_Form.TranslatedText));
-                parsers[item.ErbName].StringDictionary[item.Line].Str = Change_Form.TranslatedText;
+                logs.Push(new ChangeLog(item.ErbName, item.Info.Str, ChangeForm.TranslatedText));
+                parsers[item.ErbName].StringDictionary[item.Line].Str = ChangeForm.TranslatedText;
                 Node.Text = item.GetString(setting.LineSetting);
             }
             word_list.EndUpdate();
@@ -222,7 +222,7 @@ namespace 에라번역
         }
         private void 일괄번역버튼_Click(object sender, EventArgs e)
         {
-            Batch_Trans bt = new Batch_Trans(parsers, logs);
+            BatchTrans bt = new BatchTrans(parsers, logs);
             bt.ShowDialog();
             changed = true;
             Refresh_Word();

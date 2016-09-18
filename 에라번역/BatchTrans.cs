@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace 에라번역
 {
-    public partial class Batch_Trans : Form
+    public partial class BatchTrans : Form
     {
         private Dictionary<string, ERB_Parser> parsers;
         private Stack<ChangeLog> logs;
-        public Batch_Trans(Dictionary<string,ERB_Parser> parsers,Stack<ChangeLog>logs)
+        public BatchTrans(Dictionary<string,ERB_Parser> parsers,Stack<ChangeLog>logs)
         {
             this.parsers = parsers;
             this.logs = logs;

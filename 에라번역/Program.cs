@@ -41,14 +41,14 @@ namespace 에라번역
                             ResetEZTransPath();
                         }
                     }
-                    int result = TranslateXP.Init(ezPath, false);
+                    int result = TranslateXP.Initialize(ezPath, false);
                     if (result != 0)
                     {
                         MessageBox.Show("EZTransXP 로드에 실패하였습니다.\nCode: " + result);
                         return;
                     }
                 }
-                Application.Run(new Main_Form());
+                Application.Run(args.Length == 0 ? new MainForm() : new MainForm(args));
                 TranslateXP.Terminate();
             }
             catch (Exception e)
@@ -57,6 +57,7 @@ namespace 에라번역
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
                 fs.Flush();
                 fs.Dispose();
+                throw e;
             }
         }
         private static void ResetEZTransPath()

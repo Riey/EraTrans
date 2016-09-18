@@ -11,18 +11,27 @@ using System.Windows.Forms;
 
 namespace 에라번역
 {
-    public partial class Main_Form : Form
+    public partial class MainForm : Form
     {
         private BinaryFormatter formatter = new BinaryFormatter();
         private Setting setting;
+        private Tuple<string,string> loadedFile = null;
 
-        public Main_Form()
+        public MainForm()
         {
             InitializeComponent();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             VersionText.Text = "Version:  ";
             VersionText.Text += v.Major + "." + v.Minor + "." + v.Build;
         }
+
+        public MainForm(string[] args):this()
+        {
+            if (args.Length != 2)
+                throw new ArgumentOutOfRangeException(nameof(args));
+            loadedFile = Tuple.Create(args[0], args[1]);
+        }
+
         private void 파일열기버튼_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "ERB파일(*.ERB)|*.ERB";
@@ -68,7 +77,7 @@ namespace 에라번역
                     return;
                 }
             });
-            Translate_Form tf = new Translate_Form(parsers, setting, VersionText.Text);
+            TranslateForm tf = new TranslateForm(parsers, setting, VersionText.Text);
             tf.ShowDialog();
         }
         private void Translate(string path)
@@ -89,6 +98,11 @@ namespace 에라번역
                 setting = new Setting(CheckState.Indeterminate, CheckState.Indeterminate, CheckState.Unchecked, LineSetting.Default,AuthorSetting.Default);
             }
             Save();
+            if (loadedFile != null)
+            {
+                EncodingText.Text = loadedFile.Item2;
+                Translate(loadedFile.Item1);
+            }
         }
         private void Save()
         {

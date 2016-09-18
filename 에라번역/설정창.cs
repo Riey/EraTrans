@@ -21,7 +21,7 @@ namespace 에라번역
 
         private void 줄표시변경버튼_Click(object sender, EventArgs e)
         {
-            LineSetting_Change_Form ls = new LineSetting_Change_Form(setting.LineSetting);
+            LineSettingChangeForm ls = new LineSettingChangeForm(setting.LineSetting);
             ls.ShowDialog();
         }
 

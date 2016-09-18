@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class Translate_Form
+    partial class TranslateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Translate_Form));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TranslateForm));
             this.번역버튼 = new System.Windows.Forms.Button();
             this.저장버튼 = new System.Windows.Forms.Button();
             this.korean_cb = new System.Windows.Forms.CheckBox();

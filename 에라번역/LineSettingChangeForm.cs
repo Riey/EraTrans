@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace 에라번역
 {
-    public partial class LineSetting_Change_Form : Form
+    public partial class LineSettingChangeForm : Form
     {
         LineSetting setting;
-        public LineSetting_Change_Form(LineSetting setting)
+        public LineSettingChangeForm(LineSetting setting)
         {
             this.setting = setting;
             InitializeComponent();

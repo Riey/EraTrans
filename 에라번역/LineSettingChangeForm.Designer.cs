@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class LineSetting_Change_Form
+    partial class LineSettingChangeForm
     {
         /// <summary>
         /// Required designer variable.
