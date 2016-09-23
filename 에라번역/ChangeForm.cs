@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using EZTrans;
+using System.Text;
 
 namespace 에라번역
 {
@@ -11,11 +12,13 @@ namespace 에라번역
         string line;
         string original;
         bool exit = false;
+        bool isForm;
         public ChangeForm(NodeInfo item)
         {
             TranslatedText = null;
-            line = item.ErbFileName + "\r\n" + item.Line + "번째줄";
-            original = item.Info.Str;
+            line = item.ErbFileName + "\r\n" + item.LineNo + "번째줄";
+            original = item.Info.PrintStr;
+            isForm = item.Info.IsForm;
             InitializeComponent();
         }
 
@@ -55,7 +58,29 @@ namespace 에라번역
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
-            Translated_Text.Text = TranslateXP.Translate(Original_Text.Text);
+            if (isForm)
+            {
+                var temp = new StringBuilder();
+                var terms = Original_Text.Text.Split('%');
+                for (int i = 0; i < terms.Length; i++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        temp.Append(TranslateXP.Translate(terms[i]));
+                    }
+                    else
+                    {
+                        temp.Append('%');
+                        temp.Append(terms[i]);
+                        temp.Append('%');
+                    }
+                }
+                Translated_Text.Text = temp.ToString();
+            }
+            else
+            {
+                Translated_Text.Text = TranslateXP.Translate(Original_Text.Text);
+            }
         }
         private void 종료버튼_Click(object sender, EventArgs e)
         {

@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Fillter2.Parsing;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using Fillter;
 namespace 에라번역
 {
     public partial class 설정창 : Form
     {
-        private Dictionary<string, ERB_Parser> parsers;
+        private Dictionary<string, ErbParser> parsers;
         private Setting setting;
         private Encoding preEncoding;
-        public 설정창(Setting setting, Dictionary<string, ERB_Parser> parsers)
+        public 설정창(Setting setting, Dictionary<string, ErbParser> parsers)
         {
             this.setting = setting;
             this.parsers = parsers;
-            preEncoding = parsers.First().Value.ErbEncoding;
+            preEncoding = setting.ErbEncoding;
             InitializeComponent();
         }
 
@@ -54,10 +54,7 @@ namespace 에라번역
             }
             if(encoding != null)
             {
-                foreach(var parser in parsers)
-                {
-                    parser.Value.ErbEncoding = encoding;
-                }
+                setting.ErbEncoding = encoding;
             }
             Close();
         }

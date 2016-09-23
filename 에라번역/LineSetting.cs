@@ -51,7 +51,7 @@ namespace 에라번역
             }
         }
 
-        public string GetLine(int linenum, string linetext)
+        public string GetLine(long linenum, string linetext)
         {
             string result = "";
             int count = 0;

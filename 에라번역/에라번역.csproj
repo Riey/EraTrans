@@ -229,9 +229,9 @@
       <Project>{3724f839-bcc8-4eff-a177-ac8247660f94}</Project>
       <Name>EZTrans</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Fillter\Fillter.csproj">
-      <Project>{189B1679-6C67-41B5-B4B0-2DBD132FE22B}</Project>
-      <Name>Fillter</Name>
+    <ProjectReference Include="..\Fillter2\Fillter2.fsproj">
+      <Project>{3929c66d-38d5-46a2-bc41-c8b3bc1d5247}</Project>
+      <Name>Fillter2</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -240,7 +240,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(TargetDir)DLL\" md "$(TargetDir)DLL\"
-copy "$(TargetDir)Fillter.dll" "$(TargetDir)DLL\"
+copy "$(TargetDir)Fillter2.dll" "$(TargetDir)DLL\"
 copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
 
 IF EXIST "C:\에라번역\EraTrans\" rd /s /q "C:\에라번역\EraTrans\"

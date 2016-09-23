@@ -1,4 +1,4 @@
-﻿using Fillter;
+﻿using Fillter2.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,69 +9,16 @@ namespace 에라번역
 {
     public class NodeInfo
     {
-        private int line;
-        private string erbName;
-        private string erbFileName;
-        private LineInfo info;
 
-        public string ID
-        {
-            get
-            {
-                return ErbName + "|" + Line;
-            }
-        }
+        public string ID => ErbName + "|" + LineNo;
 
-        public int Line
-        {
-            get
-            {
-                return line;
-            }
+        public int LineNo { get; }
 
-            set
-            {
-                line = value;
-            }
-        }
+        public string ErbName { get; }
 
-        public string ErbName
-        {
-            get
-            {
-                return erbName;
-            }
+        public string ErbFileName { get; }
 
-            set
-            {
-                erbName = value;
-            }
-        }
-
-        public string ErbFileName
-        {
-            get
-            {
-                return erbFileName;
-            }
-
-            set
-            {
-                erbFileName = value;
-            }
-        }
-
-        public LineInfo Info
-        {
-            get
-            {
-                return info;
-            }
-            set
-            {
-                info = value;
-            }
-        }
+        public LineInfo Info { get; }
 
         public override int GetHashCode()
         {
@@ -80,15 +27,15 @@ namespace 에라번역
 
         public string GetString(LineSetting setting)
         {
-            return setting.GetLine(Line + 1, Info.Str);
+            return setting.GetLine(LineNo + 1, Info.PrintStr);
         }
 
-        public NodeInfo(int line, string erb_name, LineInfo info)
+        public NodeInfo(int line, string erbName, LineInfo info)
         {
-            Line = line;
-            ErbName = erb_name;
+            LineNo = line;
+            ErbName = erbName;
             Info = info;
-            ErbFileName = erb_name.Split('\\').Last();
+            ErbFileName = System.IO.Path.GetFileName(erbName);
         }
     }
 }

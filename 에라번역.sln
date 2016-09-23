@@ -4,14 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "에라번역", "에라번역\에라번역.csproj", "{2BFBDD4D-1A53-40C3-A23F-BF8149E994F9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EEA66764-C099-45A4-8EB4-E31B22671E5A} = {EEA66764-C099-45A4-8EB4-E31B22671E5A}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fillter", "Fillter\Fillter.csproj", "{189B1679-6C67-41B5-B4B0-2DBD132FE22B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "인코딩 일괄변환", "인코딩 일괄변환\인코딩 일괄변환.csproj", "{EEA66764-C099-45A4-8EB4-E31B22671E5A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{2BFBDD4D-1A53-40C3-A23F-BF8149E994F9} = {2BFBDD4D-1A53-40C3-A23F-BF8149E994F9}
 		{B944039B-3953-43E4-9D6C-44884F9EACA2} = {B944039B-3953-43E4-9D6C-44884F9EACA2}
 	EndProjectSection
 EndProject

@@ -17,41 +17,39 @@ namespace 에라번역
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {
+                if (!Directory.Exists(Application.StartupPath + "\\Res"))
+                    Directory.CreateDirectory(Application.StartupPath + "\\Res");
+                if (!Directory.Exists(Application.StartupPath + "\\Backup"))
+                    Directory.CreateDirectory(Application.StartupPath + "\\Backup");
+                string ezPath = "";
+                if (args.Length > 2)
+                    ezPath = args[2];
+                else
                 {
-                    if (!Directory.Exists(Application.StartupPath + "\\Res"))
-                        Directory.CreateDirectory(Application.StartupPath + "\\Res");
-                    if (!Directory.Exists(Application.StartupPath + "\\Backup"))
-                        Directory.CreateDirectory(Application.StartupPath + "\\Backup");
-                    string ezPath = "";
-                    if (args.Length > 2)
-                        ezPath = args[2];
-                    else
+                    if (!File.Exists(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
                     {
-                        if (!File.Exists(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
+                        ResetEZTransPath();
+                    }
+                    while (true)
+                    {
+                        using (StreamReader reader = File.OpenText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
                         {
+                            ezPath = reader.ReadLine();
+                        }
+                        if (Directory.Exists(ezPath))
+                            break;
+                        else
+                        {
+                            File.Delete(Application.StartupPath + "\\Res\\ezTransXP_Path.txt");
                             ResetEZTransPath();
                         }
-                        while (true)
-                        {
-                            using (StreamReader reader = File.OpenText(Application.StartupPath + "\\Res\\ezTransXP_Path.txt"))
-                            {
-                                ezPath = reader.ReadLine();
-                            }
-                            if (Directory.Exists(ezPath))
-                                break;
-                            else
-                            {
-                                File.Delete(Application.StartupPath + "\\Res\\ezTransXP_Path.txt");
-                                ResetEZTransPath();
-                            }
-                        }
                     }
-                    int result = TranslateXP.Initialize(ezPath, false);
-                    if (result != 0)
-                    {
-                        MessageBox.Show("EZTransXP 로드에 실패하였습니다.\nCode: " + result);
-                        return;
-                    }
+                }
+                int result = TranslateXP.Initialize(ezPath);
+                if (result != 0)
+                {
+                    MessageBox.Show("EZTransXP 로드에 실패하였습니다.\nCode: " + result);
+                    return;
                 }
                 Application.Run(args.Length == 0 ? new MainForm() : new MainForm(args));
                 TranslateXP.Terminate();

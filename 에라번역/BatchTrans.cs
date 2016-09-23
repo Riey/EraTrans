@@ -1,4 +1,4 @@
-﻿using Fillter;
+﻿using Fillter2.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -7,9 +7,9 @@ namespace 에라번역
 {
     public partial class BatchTrans : Form
     {
-        private Dictionary<string, ERB_Parser> parsers;
+        private Dictionary<string, ErbParser> parsers;
         private Stack<ChangeLog> logs;
-        public BatchTrans(Dictionary<string,ERB_Parser> parsers,Stack<ChangeLog>logs)
+        public BatchTrans(Dictionary<string, ErbParser> parsers,Stack<ChangeLog>logs)
         {
             this.parsers = parsers;
             this.logs = logs;
@@ -25,11 +25,11 @@ namespace 에라번역
                 {
                     foreach (var parser in parsers)
                     {
-                        foreach(var item in parser.Value.StringDictionary)
+                        foreach(var line in parser.Value.PrintLines)
                         {
-                            if (item.Value.Str.Contains(원본.Text))
+                            if (line.Value.PrintStr.Contains(원본.Text))
                             {
-                                item.Value.Str = item.Value.Str.Replace(원본.Text, 번역본.Text);
+                                line.Value.PrintStr = line.Value.PrintStr.Replace(원본.Text, 번역본.Text);
                                 logs.Push(new ChangeLog(parser.Key, 원본.Text, 번역본.Text));
                             }
                         }

@@ -10,18 +10,20 @@ namespace 에라번역
     [Serializable]
     public class Setting
     {
-        public CheckState KoreanCB;
-        public CheckState JapaneseCB;
-        public CheckState etcCB;
-        public LineSetting LineSetting;
-        public AuthorSetting AuthorSetting;
-        public Setting(CheckState KoreanCB, CheckState JapaneseCB, CheckState etcCB, LineSetting LineSetting,AuthorSetting AuthorSetting)
+        public CheckState KoreanCB { get; set; }
+        public CheckState JapaneseCB { get; set; }
+        public CheckState EtcCB { get; set; }
+        public LineSetting LineSetting { get; set; }
+        public AuthorSetting AuthorSetting { get; set; }
+        public Encoding ErbEncoding { get; set; }
+        public Setting(CheckState koreanCB, CheckState japaneseCB, CheckState etcCB, LineSetting lineSetting,AuthorSetting authorSetting, Encoding erbEncoding)
         {
-            this.KoreanCB = KoreanCB;
-            this.JapaneseCB = JapaneseCB;
-            this.etcCB = etcCB;
-            this.LineSetting = LineSetting;
-            this.AuthorSetting = AuthorSetting;
+            KoreanCB = koreanCB;
+            JapaneseCB = japaneseCB;
+            EtcCB = etcCB;
+            LineSetting = lineSetting;
+            AuthorSetting = authorSetting;
+            ErbEncoding = erbEncoding;
         }
     }
 }
