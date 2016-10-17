@@ -1,6 +1,7 @@
 ﻿using Fillter;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +10,8 @@ namespace 에라번역
 {
     public class NodeInfo
     {
-        private int line;
-        private string erbName;
+        private int lineNo;
+        private string erbPath;
         private string erbFileName;
         private LineInfo info;
 
@@ -18,49 +19,30 @@ namespace 에라번역
         {
             get
             {
-                return ErbName + "|" + Line;
+                return ErbPath + "|" + LineNo;
             }
         }
-
-        public int Line
+        public int LineNo
         {
             get
             {
-                return line;
-            }
-
-            set
-            {
-                line = value;
+                return lineNo;
             }
         }
-
-        public string ErbName
+        public string ErbPath
         {
             get
             {
-                return erbName;
-            }
-
-            set
-            {
-                erbName = value;
+                return erbPath;
             }
         }
-
         public string ErbFileName
         {
             get
             {
                 return erbFileName;
             }
-
-            set
-            {
-                erbFileName = value;
-            }
         }
-
         public LineInfo Info
         {
             get
@@ -80,15 +62,15 @@ namespace 에라번역
 
         public string GetString(LineSetting setting)
         {
-            return setting.GetLine(Line + 1, Info.Str);
+            return setting.GetLine(LineNo + 1, Info.Str);
         }
 
-        public NodeInfo(int line, string erb_name, LineInfo info)
+        public NodeInfo(int lineNo, string erbPath, LineInfo info)
         {
-            Line = line;
-            ErbName = erb_name;
+            this.lineNo = lineNo;
+            this.erbPath = erbPath;
             Info = info;
-            ErbFileName = erb_name.Split('\\').Last();
+            erbFileName = Path.GetFileName(erbPath);
         }
     }
 }

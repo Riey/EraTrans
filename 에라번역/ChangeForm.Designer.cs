@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class Change_Form
+    partial class ChangeForm
     {
         /// <summary>
         /// Required designer variable.

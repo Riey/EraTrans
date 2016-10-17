@@ -9,38 +9,13 @@ namespace 에라번역
     [Serializable]
     public class LineSetting
     {
-        private string setting;
-        private string[] str;
+        public string Format { get; }
+        public string[] Strs { get; }
 
-        public string Setting
+        public LineSetting(string format, string[] strs)
         {
-            get
-            {
-                return setting;
-            }
-
-            set
-            {
-                setting = value;
-            }
-        }
-        public string[] Str
-        {
-            get
-            {
-                return str;
-            }
-
-            set
-            {
-                str = value;
-            }
-        }
-
-        public LineSetting(string setting, string[] str)
-        {
-            Setting = setting;
-            this.str = str;
+            Format = format;
+            Strs = strs;
         }
 
         public static LineSetting Default
@@ -53,33 +28,39 @@ namespace 에라번역
 
         public string GetLine(int linenum, string linetext)
         {
-            string result = "";
+            StringBuilder result = new StringBuilder();
             int count = 0;
-            foreach (string temp in Setting.Split('+'))
+            foreach (string temp in Format.Split('+'))
             {
                 switch (temp)
                 {
                     case ("LINENUM"):
                         {
-                            result += linenum;
+                            result.Append(linenum);
                             break;
                         }
                     case ("LINETEXT"):
                         {
-                            result += linetext;
+                            result.Append(linetext);
                             break;
                         }
                     case ("str"):
                         {
-                            if (count <= Str.Length)
+                            if (count <= Strs.Length)
                             {
-                                result += Str[count++];
+                                result.Append(Strs[count++]);
                             }
                             break;
                         }
                 }
             }
-            return result;
+            return result.ToString();
+        }
+
+        public override string ToString()
+        {
+            //string strs = Strs.Length == 0 ? "" : Strs.Length == 1 ? Strs[0] : string.Join("|", Strs);
+            return $"{Format} {string.Join("|", Strs)}";
         }
     }
 }

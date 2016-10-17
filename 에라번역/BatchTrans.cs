@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace 에라번역
 {
-    public partial class Batch_Trans : Form
+    public partial class BatchTrans : Form
     {
         private Dictionary<string, ERB_Parser> parsers;
         private Stack<ChangeLog> logs;
-        public Batch_Trans(Dictionary<string,ERB_Parser> parsers,Stack<ChangeLog>logs)
+        public BatchTrans(Dictionary<string,ERB_Parser> parsers,Stack<ChangeLog>logs)
         {
             this.parsers = parsers;
             this.logs = logs;
@@ -20,6 +20,10 @@ namespace 에라번역
         {
             if (!string.IsNullOrEmpty(번역본.Text))
             {
+                if(번역본.Text.Contains("%")|| 번역본.Text.Contains("{") || 번역본.Text.Contains("}") || 번역본.Text.Contains("\\@"))
+                {
+                    MessageBox.Show("바뀔 문자열에 위험한 문자가 포함되어 있습니다", "경고", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
                 DialogResult result = MessageBox.Show(원본.Text + "를(을) " + 번역본.Text + "로 정말 바꾸겠습니까?", "변경", MessageBoxButtons.OKCancel);
                 if (result == DialogResult.OK)
                 {

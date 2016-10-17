@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class Translate_Form
+    partial class TranslateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,13 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Translate_Form));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TranslateForm));
             this.번역버튼 = new System.Windows.Forms.Button();
             this.저장버튼 = new System.Windows.Forms.Button();
             this.korean_cb = new System.Windows.Forms.CheckBox();
             this.japanese_cb = new System.Windows.Forms.CheckBox();
             this.etc_cb = new System.Windows.Forms.CheckBox();
-            this.설정버튼 = new System.Windows.Forms.Button();
             this.일괄번역버튼 = new System.Windows.Forms.Button();
             this.다시실행버튼 = new System.Windows.Forms.Button();
             this.실행취소버튼 = new System.Windows.Forms.Button();
@@ -76,9 +75,8 @@
             this.korean_cb.Size = new System.Drawing.Size(62, 19);
             this.korean_cb.TabIndex = 3;
             this.korean_cb.Text = "한국어";
-            this.korean_cb.ThreeState = true;
             this.korean_cb.UseVisualStyleBackColor = true;
-            this.korean_cb.CheckStateChanged += new System.EventHandler(this.표시언어바꾸기);
+            this.korean_cb.CheckStateChanged += new System.EventHandler(this.displayLanguageChagned);
             // 
             // japanese_cb
             // 
@@ -90,9 +88,8 @@
             this.japanese_cb.Size = new System.Drawing.Size(62, 19);
             this.japanese_cb.TabIndex = 4;
             this.japanese_cb.Text = "일본어";
-            this.japanese_cb.ThreeState = true;
             this.japanese_cb.UseVisualStyleBackColor = true;
-            this.japanese_cb.CheckStateChanged += new System.EventHandler(this.표시언어바꾸기);
+            this.japanese_cb.CheckStateChanged += new System.EventHandler(this.displayLanguageChagned);
             // 
             // etc_cb
             // 
@@ -105,18 +102,7 @@
             this.etc_cb.TabIndex = 5;
             this.etc_cb.Text = "그외";
             this.etc_cb.UseVisualStyleBackColor = true;
-            this.etc_cb.CheckStateChanged += new System.EventHandler(this.표시언어바꾸기);
-            // 
-            // 설정버튼
-            // 
-            this.설정버튼.Location = new System.Drawing.Point(1113, 377);
-            this.설정버튼.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.설정버튼.Name = "설정버튼";
-            this.설정버튼.Size = new System.Drawing.Size(100, 44);
-            this.설정버튼.TabIndex = 7;
-            this.설정버튼.Text = "설정";
-            this.설정버튼.UseVisualStyleBackColor = true;
-            this.설정버튼.Click += new System.EventHandler(this.설정버튼_Click);
+            this.etc_cb.CheckStateChanged += new System.EventHandler(this.displayLanguageChagned);
             // 
             // 일괄번역버튼
             // 
@@ -200,11 +186,11 @@
             this.word_list.KeyDown += new System.Windows.Forms.KeyEventHandler(this.word_list_KeyDown);
             this.word_list.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.word_list_MouseDoubleClick);
             // 
-            // Translate_Form
+            // TranslateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1236, 890);
+            this.ClientSize = new System.Drawing.Size(1236, 873);
             this.Controls.Add(this.word_list);
             this.Controls.Add(this.자동번역버튼);
             this.Controls.Add(this.전체줄수);
@@ -212,7 +198,6 @@
             this.Controls.Add(this.실행취소버튼);
             this.Controls.Add(this.다시실행버튼);
             this.Controls.Add(this.일괄번역버튼);
-            this.Controls.Add(this.설정버튼);
             this.Controls.Add(this.etc_cb);
             this.Controls.Add(this.japanese_cb);
             this.Controls.Add(this.korean_cb);
@@ -220,10 +205,10 @@
             this.Controls.Add(this.번역버튼);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "Translate_Form";
+            this.Name = "TranslateForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "작업창";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Translate_Form_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TranslateForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Translate_Form_FormClosed);
             this.Load += new System.EventHandler(this.Translate_Form_Load);
             this.ResumeLayout(false);
@@ -237,7 +222,6 @@
         private System.Windows.Forms.CheckBox korean_cb;
         private System.Windows.Forms.CheckBox japanese_cb;
         private System.Windows.Forms.CheckBox etc_cb;
-        private System.Windows.Forms.Button 설정버튼;
         private System.Windows.Forms.Button 일괄번역버튼;
         private System.Windows.Forms.Button 다시실행버튼;
         private System.Windows.Forms.Button 실행취소버튼;

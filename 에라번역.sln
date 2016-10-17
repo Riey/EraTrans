@@ -20,12 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "인코딩 일괄변환", "�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "로그분석", "로그분석\로그분석.csproj", "{B944039B-3953-43E4-9D6C-44884F9EACA2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EZTrans", "..\EZTrans\EZTrans\EZTrans.vcxproj", "{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}"
-EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -83,16 +78,6 @@ Global
 		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x64.Build.0 = Release|Any CPU
 		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x86.ActiveCfg = Release|Any CPU
 		{B944039B-3953-43E4-9D6C-44884F9EACA2}.Release|x86.Build.0 = Release|Any CPU
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Debug|x64.ActiveCfg = Debug|x64
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Debug|x64.Build.0 = Debug|x64
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Debug|x86.ActiveCfg = Debug|Win32
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Debug|x86.Build.0 = Debug|Win32
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Release|Any CPU.ActiveCfg = Release|Win32
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Release|x64.ActiveCfg = Release|x64
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Release|x64.Build.0 = Release|x64
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Release|x86.ActiveCfg = Release|Win32
-		{1D9BF88A-E325-44C9-8988-CBE40D5D0F94}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

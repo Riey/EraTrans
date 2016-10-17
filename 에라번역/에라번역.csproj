@@ -107,6 +107,13 @@
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Config">
+      <HintPath>..\Library\Config.dll</HintPath>
+    </Reference>
+    <Reference Include="EZTrans, Version=2.0.1.40017, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\EZTrans.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Presentation" />
@@ -118,18 +125,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batch_Trans.cs">
+    <Compile Include="AutoTransFillter.cs" />
+    <Compile Include="BatchTrans.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Batch_Trans.Designer.cs">
-      <DependentUpon>Batch_Trans.cs</DependentUpon>
+    <Compile Include="BatchTrans.Designer.cs">
+      <DependentUpon>BatchTrans.cs</DependentUpon>
     </Compile>
     <Compile Include="ChangeLog.cs" />
-    <Compile Include="Change_Form.cs">
+    <Compile Include="ChangeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Change_Form.Designer.cs">
-      <DependentUpon>Change_Form.cs</DependentUpon>
+    <Compile Include="ChangeForm.Designer.cs">
+      <DependentUpon>ChangeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LineSetting.cs" />
     <Compile Include="NodeInfo.cs" />
@@ -137,53 +145,29 @@
     <Compile Include="TreeViewMS.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="작성자설정창.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="작성자설정창.Designer.cs">
-      <DependentUpon>작성자설정창.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LineSetting_Change_Form.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LineSetting_Change_Form.Designer.cs">
-      <DependentUpon>LineSetting_Change_Form.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Main_Form.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Main_Form.Designer.cs">
-      <DependentUpon>Main_Form.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Translate_Form.cs">
+    <Compile Include="TranslateForm.cs">
       <SubType>Form</SubType>
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Translate_Form.Designer.cs">
-      <DependentUpon>Translate_Form.cs</DependentUpon>
+    <Compile Include="TranslateForm.Designer.cs">
+      <DependentUpon>TranslateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="설정창.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="설정창.Designer.cs">
-      <DependentUpon>설정창.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Batch_Trans.resx">
-      <DependentUpon>Batch_Trans.cs</DependentUpon>
+    <EmbeddedResource Include="BatchTrans.resx">
+      <DependentUpon>BatchTrans.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Change_Form.resx">
-      <DependentUpon>Change_Form.cs</DependentUpon>
+    <EmbeddedResource Include="ChangeForm.resx">
+      <DependentUpon>ChangeForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="작성자설정창.resx">
-      <DependentUpon>작성자설정창.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LineSetting_Change_Form.resx">
-      <DependentUpon>LineSetting_Change_Form.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main_Form.resx">
-      <DependentUpon>Main_Form.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -195,11 +179,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Translate_Form.resx">
-      <DependentUpon>Translate_Form.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="설정창.resx">
-      <DependentUpon>설정창.cs</DependentUpon>
+    <EmbeddedResource Include="TranslateForm.resx">
+      <DependentUpon>TranslateForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="Properties\Settings.settings">
@@ -225,10 +206,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EZTrans\EZTrans\EZTrans.vcxproj">
-      <Project>{1d9bf88a-e325-44c9-8988-cbe40d5d0f94}</Project>
-      <Name>EZTrans</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Fillter\Fillter.csproj">
       <Project>{189b1679-6c67-41b5-b4b0-2dbd132fe22b}</Project>
       <Name>Fillter</Name>
@@ -240,18 +217,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)Fillter.dll" "$(TargetDir)DLL\"
-copy "$(TargetDir)EZTrans.dll" "$(TargetDir)DLL\"
+    <PostBuildEvent>copy "$(TargetDir)*.dll" "$(TargetDir)DLL\"
 IF NOT EXIST "C:\에라번역\에라번역\DLL\" MD "C:\에라번역\에라번역\DLL\"
 MD "C:\에라번역\EraTrans\DLL\"
 copy "$(TargetDir)에라번역.exe" "C:\에라번역\에라번역\"
 copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\에라번역\"
-copy "$(TargetDir)Fillter.dll" "C:\에라번역\에라번역\DLL\"
-copy "$(TargetDir)EZTrans.dll" "C:\에라번역\에라번역\DLL\"
+copy "$(TargetDir)*.dll" "C:\에라번역\에라번역\DLL\"
 copy "$(TargetDir)에라번역.exe" "C:\에라번역\EraTrans\"
 copy "$(TargetDir)에라번역.exe.config" "C:\에라번역\EraTrans\"
-copy "$(TargetDir)Fillter.dll" "C:\에라번역\EraTrans\DLL\"
-copy "$(TargetDir)EZTrans.dll" "C:\에라번역\EraTrans\DLL\"</PostBuildEvent>
+copy "$(TargetDir)*.dll" "C:\에라번역\EraTrans\DLL\"
+copy "$(TargetDir)*.dll" "C:\에라번역\EraTrans\DLL\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

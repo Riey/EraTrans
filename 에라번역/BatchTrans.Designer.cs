@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class Batch_Trans
+    partial class BatchTrans
     {
         /// <summary>
         /// Required designer variable.

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -29,6 +30,10 @@ namespace Fillter
             }
             using (FileStream ErbStream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
+                //string plainPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINT[^(FORM)(FORMS) ]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
+                //string formPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINTFORM[^ S]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
+                //string formsPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINTFORMS[^ ]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
+
                 StreamReader reader = encoding != null ? new StreamReader(ErbStream, encoding) : new StreamReader(ErbStream, true);
                 {
                     ErbEncoding = reader.CurrentEncoding;
@@ -47,14 +52,16 @@ namespace Fillter
                                     Monitor.Wait(this);
                                 }
                                 can_exit = false;
+                                string printPattern = @"^(?<NonString>\s*PRINT[^ ]* ?)(?<String>.+)?$";
+                                string dataPattern = @"^(?<NonString>\s*DATA(FORM)? ?)(?<String>.+)?$";
                                 for (int i = 0; i < buffer.Count; i++)
                                 {
                                     ERBInfo erbinfo = buffer.Dequeue();
                                     if (!erbinfo.DATA)
                                     {
-                                        string temp = erbinfo.Text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
-                                        StringDictionary.Add(erbinfo.Line, new LineInfo(erbinfo.Text.Replace(temp, "")));
-                                        NonStringDictionary.Add(erbinfo.Line, temp);
+                                        Match printMatch = Regex.Match(erbinfo.Text, printPattern);
+                                        StringDictionary.Add(erbinfo.LineNo, new LineInfo(printMatch.Groups["String"].Value, erbinfo.Text.Contains("FORM"), erbinfo.Text.Contains("FORMS")));
+                                        NonStringDictionary.Add(erbinfo.LineNo, printMatch.Groups["NonString"].Value);
                                     }
                                     else
                                     {
@@ -64,18 +71,16 @@ namespace Fillter
                                             {
                                                 if (listinfo.Forms[a - 1].Contains("DATAFORM"))
                                                 {
-                                                    string[] line = listinfo.Forms[a - 1].Split(new string[] { "DATAFORM" }, StringSplitOptions.None);
-                                                    string _str = line[0] + "DATAFORM";
-                                                    string str = line[1] ?? "";
-                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line));
-                                                    NonStringDictionary.Add(listinfo.Line + a, _str);
+                                                    Match dataMatch = Regex.Match(listinfo.Forms[a - 1], dataPattern);
+                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(dataMatch.Groups["String"].Value, listinfo.Line, true, false));
+                                                    NonStringDictionary.Add(listinfo.Line + a, dataMatch.Groups["NonString"].Value);
                                                 }
                                                 else if (listinfo.Forms[a - 1].Contains("DATA"))
                                                 {
                                                     string[] line = listinfo.Forms[a - 1].Split(new string[] { "DATA" }, StringSplitOptions.None);
                                                     string _str = line[0] + "DATA";
                                                     string str = line[1] ?? "";
-                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line));
+                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line, false, false));
                                                     NonStringDictionary.Add(listinfo.Line + a, _str);
                                                 }
                                                 else
@@ -176,19 +181,21 @@ namespace Fillter
         Queue<ERBInfo> buffer = new Queue<ERBInfo>();
         public void Save()
         {
-            var ErbStream = new FileStream(ErbPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
-            using(StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
+            using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
             {
-                foreach(var a in StringDictionary)
+                using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
                 {
-                    string temp = NonStringDictionary[a.Key] + a.Value.Str;
-                    OriginalTexts[a.Key] = temp;
+                    foreach (var a in StringDictionary)
+                    {
+                        string temp = NonStringDictionary[a.Key] + a.Value.Str;
+                        OriginalTexts[a.Key] = temp;
+                    }
+                    foreach (var a in OriginalTexts)
+                    {
+                        writer.WriteLine(a);
+                    }
+                    writer.Flush();
                 }
-                foreach(var a in OriginalTexts)
-                {
-                    writer.WriteLine(a);
-                }
-                writer.Flush();
             }
         }
         private List<string> originalTexts = new List<string>();
@@ -275,83 +282,32 @@ namespace Fillter
         }
         class ERBInfo
         {
-            private string text;
-            private int line;
-            private bool dATA;
-            private List<DataListInfo> data_list;
+            public string Text { get; }
 
-            public string Text
-            {
-                get
-                {
-                    return text;
-                }
+            public int LineNo { get; }
 
-                set
-                {
-                    text = value;
-                }
-            }
+            public bool DATA { get; private set; }
 
-            public int Line
-            {
-                get
-                {
-                    return line;
-                }
-
-                set
-                {
-                    line = value;
-                }
-            }
-
-            public bool DATA
-            {
-                get
-                {
-                    return dATA;
-                }
-
-                set
-                {
-                    dATA = value;
-                }
-            }
-
-            public List<DataListInfo> Data_list
-            {
-                get
-                {
-                    return data_list;
-                }
-
-                set
-                {
-                    data_list = value;
-                }
-            }
+            public List<DataListInfo> Data_list { get; }
 
             public ERBInfo(string text, int line)
             {
-                this.Text = text;
-                this.Line = line;
+                Text = text;
+                LineNo = line;
                 DATA = false;
             }
             public ERBInfo(List<DataListInfo> data_list)
             {
-                this.Data_list = data_list;
+                Data_list = data_list;
                 DATA = true;
             }
         }
     }
     public class LineInfo
     {
-        private bool isList;
         private bool korean;
         private bool japanese;
         private string str;
-        private int parent_line;
 
         public string Str
         {
@@ -366,54 +322,28 @@ namespace Fillter
             }
         }
 
-        public bool IsList
-        {
-            get
-            {
-                return isList;
-            }
-        }
+        public bool IsForm { get; }
+        public bool IsFormS { get; }
+        public bool IsList { get; }
+        public int ParentLine { get; }
+        public bool Korean => korean;
+        public bool Japanese => japanese;
 
-        public bool Korean
-        {
-            get
-            {
-                return korean;
-            }
-        }
-
-        public bool Japanese
-        {
-            get
-            {
-                return japanese;
-            }
-        }
-
-        public int Parent_line
-        {
-            get
-            {
-                return parent_line;
-            }
-
-            set
-            {
-                parent_line = value;
-            }
-        }
-
-        public LineInfo(string str)
+        public LineInfo(string str, bool isForm, bool isFormS)
         {
             Str = str;
-            isList = false;
+            IsList = false;
+            IsForm = !isFormS && isForm;
+            IsFormS = isFormS;
         }
-        public LineInfo(string str, int parent_line)
+        public LineInfo(string str, int parentLine, bool isForm, bool isFormS)
         {
             //parent_line 부모 DATALIST의 줄수이며 이것으로 같은 FORM인지 구분
             Str = str;
-            Parent_line = parent_line;
-            isList = true;
+            ParentLine = parentLine;
+            IsList = true;
+            IsForm = isForm;
+            IsFormS = isFormS;
         }
     }
     static class GetLang
@@ -424,7 +354,7 @@ namespace Fillter
             Japanese = false;
             foreach (var a in str)
             {
-                if ((a >= 0x3040 && a <= 0x309F) || (a >= 0x30A0 && a <= 0x30FF) || (a >= 0x31F0 && a <= 0x31FF))
+                if ((a >= 0x3040 && a <= 0x30FF) || (a >= 0x4E00 && a <= 0x9FAF))
                     Japanese = true;
                 if ((a >= 0x1100 && a <= 0x11FF) || (a >= 0x3131 && a <= 0x318F) || (a >= 0xAC00 && a <= 0xD7FF))
                     Korean = true;

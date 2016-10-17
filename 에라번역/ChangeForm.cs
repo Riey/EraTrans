@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using EZTrans;
+using YeongHun.EZTrans;
 
 namespace 에라번역
 {
-    public partial class Change_Form : Form
+    public partial class ChangeForm : Form
     {
         public static string TranslatedText = null;
         string line;
         string original;
         bool exit = false;
-        public Change_Form(NodeInfo item)
+        public ChangeForm(NodeInfo item)
         {
             TranslatedText = null;
-            line = item.ErbFileName + "\r\n" + item.Line + "번째줄";
+            line = item.ErbFileName + "\r\n" + item.LineNo + "번째줄";
             original = item.Info.Str;
             InitializeComponent();
         }

@@ -70,14 +70,14 @@ namespace 에라번역
                     }
                 case (행동.일괄번역):
                     {
-                        List<Tuple<int, string>> diclog = new List<Tuple<int, string>>();
+                        List<Tuple<int, LineInfo, string>> diclog = new List<Tuple<int, LineInfo,string>>();
                         foreach (var temp in parsers[log.ErbName].StringDictionary)
                         {
-                            diclog.Add(new Tuple<int, string>(temp.Key, temp.Value.Str.Replace(log.Str2, log.Str1)));
+                            diclog.Add(new Tuple<int,LineInfo, string>(temp.Key,temp.Value, temp.Value.Str.Replace(log.Str2, log.Str1)));
                         }
                         foreach (var temp in diclog)
                         {
-                            parsers[log.ErbName].StringDictionary[temp.Item1] = new LineInfo(temp.Item2);
+                            parsers[log.ErbName].StringDictionary[temp.Item1] = new LineInfo(temp.Item3, temp.Item2.IsForm, temp.Item2.IsFormS);
                         }
                         cl = new ChangeLog(log.ErbName, log.Str2, log.Str1);
                         break;

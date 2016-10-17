@@ -1,6 +1,6 @@
 ﻿namespace 에라번역
 {
-    partial class Main_Form
+    partial class MainForm
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.

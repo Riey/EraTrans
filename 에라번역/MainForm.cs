@@ -8,16 +8,18 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using YeongHun.Common.Config;
 
 namespace 에라번역
 {
-    public partial class Main_Form : Form
+    public partial class MainForm : Form
     {
         private BinaryFormatter formatter = new BinaryFormatter();
         private Setting setting;
 
-        public Main_Form()
+        public MainForm(ConfigDic config)
         {
+            setting = new Setting(config);
             InitializeComponent();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             VersionText.Text = "Version:  ";
@@ -68,7 +70,7 @@ namespace 에라번역
                     return;
                 }
             });
-            Translate_Form tf = new Translate_Form(parsers, setting, VersionText.Text);
+            TranslateForm tf = new TranslateForm(parsers, setting, VersionText.Text);
             tf.ShowDialog();
         }
         private void Translate(string path)
@@ -77,25 +79,11 @@ namespace 에라번역
         }
         private void Main_Form_Load(object sender, EventArgs e)
         {
-            try
-            {
-                using (FileStream fs = new FileStream(Application.StartupPath + "\\Res\\Setting.dat", FileMode.Open))
-                {
-                    setting = formatter.Deserialize(fs) as Setting;
-                }
-            }
-            catch (Exception)
-            {
-                setting = new Setting(CheckState.Indeterminate, CheckState.Indeterminate, CheckState.Unchecked, LineSetting.Default,AuthorSetting.Default);
-            }
             Save();
         }
         private void Save()
         {
-            using (FileStream fs = new FileStream(Application.StartupPath + "\\Res\\Setting.dat", FileMode.Create))
-            {
-                formatter.Serialize(fs, setting);
-            }
+            setting.Config.Save(Application.StartupPath + "\\Config.txt");
         }
 
         private void Main_Form_DragDrop(object sender, DragEventArgs e)
