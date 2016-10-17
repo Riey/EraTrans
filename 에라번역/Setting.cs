@@ -56,11 +56,42 @@ namespace 에라번역
             }
         }
 
+        public Encoding ReadEncoding
+        {
+            get
+            {
+                return Config.GetValue<Encoding>(nameof(ReadEncoding));
+            }
+            set
+            {
+                Config.SetValue(nameof(ReadEncoding), value);
+            }
+        }
+        
         public ConfigDic Config { get; }
 
         public Setting(ConfigDic config)
         {
             Config = config;
+
+            config.AddParser(str =>
+            {
+                try
+                {
+                    return Encoding.GetEncoding(str);
+                }
+                catch
+                {
+                    int codePage;
+                    if (int.TryParse(str, out codePage))
+                        return Encoding.GetEncoding(codePage);
+                    else
+                        throw new InvalidCastException();
+                }
+            });
+
+            config.AddWriter<Encoding>(encoding => encoding.WebName.ToUpper());
+
             config.AddParser(str => (CheckState)Enum.Parse(typeof(CheckState), str));
             config.AddParser(str =>
             {
@@ -75,14 +106,16 @@ namespace 에라번역
                 return new LineSetting(format, strs.ToArray());
             });
 
-            if (!config.HasKey("KoreanCB"))
-                config["KoreanCB"] = CheckState.Checked.ToString();
-            if (!config.HasKey("JapaneseCB"))
-                config["JapaneseCB"] = CheckState.Checked.ToString();
-            if (!config.HasKey("etcCB"))
-                config["etcCB"] = CheckState.Checked.ToString();
-            if (!config.HasKey("LineSetting"))
-                config["LineSetting"] = LineSetting.Default.ToString();
+            if (!config.HasKey(nameof(KoreanCB)))
+                config[nameof(KoreanCB)] = CheckState.Checked.ToString();
+            if (!config.HasKey(nameof(JapaneseCB)))
+                config[nameof(JapaneseCB)] = CheckState.Checked.ToString();
+            if (!config.HasKey(nameof(etcCB)))
+                config[nameof(etcCB)] = CheckState.Checked.ToString();
+            if (!config.HasKey(nameof(LineSetting)))
+                config[nameof(LineSetting)] = LineSetting.Default.ToString();
+            if (!config.HasKey(nameof(ReadEncoding)))
+                config[nameof(ReadEncoding)] = Encoding.UTF8.WebName.ToUpper();
         }
     }
 }

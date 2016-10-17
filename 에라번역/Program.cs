@@ -3,28 +3,34 @@ using System.Windows.Forms;
 using System.IO;
 using YeongHun.EZTrans;
 using YeongHun.Common.Config;
+using System.Diagnostics;
 
 namespace 에라번역
 {
     static class Program
     {
+        internal static readonly string RootPath = Application.StartupPath + Path.DirectorySeparatorChar;
+        internal static readonly string LogFilePath = RootPath + "log.dat";
+        internal static readonly string ConfigFilePath = RootPath + "Config.txt";
+        internal static readonly string ResourceFolderPath = RootPath + "Res" + Path.DirectorySeparatorChar;
+
         /// <summary>
         /// 해당 응용 프로그램의 주 진입점입니다.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
-            if (!Directory.Exists(Application.StartupPath + "\\Res"))
-                Directory.CreateDirectory(Application.StartupPath + "\\Res");
-            if (!Directory.Exists(Application.StartupPath + "\\Backup"))
-                Directory.CreateDirectory(Application.StartupPath + "\\Backup");
+            if (!Directory.Exists(ResourceFolderPath))
+                Directory.CreateDirectory(ResourceFolderPath);
+            if (!Directory.Exists(RootPath + "Backup"))
+                Directory.CreateDirectory(RootPath + "Backup");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {
                 string ezPath = "";
                 ConfigDic config = new ConfigDic();
-                config.Load(Application.StartupPath + "\\Config.txt");
+                config.Load(ConfigFilePath);
                 if (!config.TryGetValue("ezTransXP_Path", out ezPath))
                 {
                     FolderBrowserDialog dialog = new FolderBrowserDialog();
@@ -42,15 +48,16 @@ namespace 에라번역
                     return;
                 }
                 Application.Run(new MainForm(config));
-                config.Save(Application.StartupPath + "\\Res\\Config.txt");
+                config.Save(ConfigFilePath);
                 TranslateXP.Terminate();
             }
             catch (Exception e)
             {
-                FileStream fs = new FileStream(Application.StartupPath + "\\log.dat", FileMode.Create);
+                FileStream fs = new FileStream(LogFilePath, FileMode.Create);
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
                 fs.Flush();
                 fs.Dispose();
+                Trace.Assert(false);
             }
         }
     }

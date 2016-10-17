@@ -67,9 +67,8 @@
             this.EncodingText.Name = "EncodingText";
             this.EncodingText.Size = new System.Drawing.Size(100, 23);
             this.EncodingText.TabIndex = 5;
-            this.EncodingText.Text = "인코딩설정";
+            this.EncodingText.Text = "UTF-8";
             this.EncodingText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.EncodingText.Enter += new System.EventHandler(this.EncodingText_Enter);
             // 
             // openFileDialog1
             // 
@@ -88,7 +87,7 @@
             this.폴더열기버튼.UseVisualStyleBackColor = true;
             this.폴더열기버튼.Click += new System.EventHandler(this.폴더열기버튼_Click);
             // 
-            // Main_Form
+            // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -100,13 +99,13 @@
             this.Controls.Add(this.파일열기버튼);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "Main_Form";
+            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "에라번역";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_Form_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Main_Form_Load);
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Main_Form_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Main_Form_DragEnter);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.ResumeLayout(false);
             this.PerformLayout();
 
