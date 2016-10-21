@@ -10,15 +10,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "에라번역", "에라번�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fillter", "Fillter\Fillter.csproj", "{189B1679-6C67-41B5-B4B0-2DBD132FE22B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{EEA66764-C099-45A4-8EB4-E31B22671E5A} = {EEA66764-C099-45A4-8EB4-E31B22671E5A}
 		{B944039B-3953-43E4-9D6C-44884F9EACA2} = {B944039B-3953-43E4-9D6C-44884F9EACA2}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "인코딩 일괄변환", "인코딩 일괄변환\인코딩 일괄변환.csproj", "{EEA66764-C099-45A4-8EB4-E31B22671E5A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B944039B-3953-43E4-9D6C-44884F9EACA2} = {B944039B-3953-43E4-9D6C-44884F9EACA2}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "로그분석", "로그분석\로그분석.csproj", "{B944039B-3953-43E4-9D6C-44884F9EACA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EEA66764-C099-45A4-8EB4-E31B22671E5A} = {EEA66764-C099-45A4-8EB4-E31B22671E5A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
