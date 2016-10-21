@@ -43,7 +43,7 @@ namespace 에라번역
                 return erbFileName;
             }
         }
-        public LineInfo Info
+        public LineInfo LineInfo
         {
             get
             {
@@ -62,14 +62,14 @@ namespace 에라번역
 
         public string GetString(LineSetting setting)
         {
-            return setting.GetLine(LineNo + 1, Info.Str);
+            return setting.GetLine(LineNo + 1, LineInfo.Str);
         }
 
         public NodeInfo(int lineNo, string erbPath, LineInfo info)
         {
             this.lineNo = lineNo;
             this.erbPath = erbPath;
-            Info = info;
+            LineInfo = info;
             erbFileName = Path.GetFileName(erbPath);
         }
     }

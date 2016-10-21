@@ -15,7 +15,7 @@ namespace 에라번역
         {
             TranslatedText = null;
             line = item.ErbFileName + "\r\n" + item.LineNo + "번째줄";
-            original = item.Info.Str;
+            original = item.LineInfo.Str;
             InitializeComponent();
         }
 

@@ -37,148 +37,86 @@ namespace Fillter
                 StreamReader reader = encoding != null ? new StreamReader(ErbStream, encoding) : new StreamReader(ErbStream, true);
                 {
                     ErbEncoding = reader.CurrentEncoding;
-                    int count = -1;
-                    bool can_exit = false;
-                    #region 해석스레드
-                    Thread de_thread = new Thread(() =>
-                    {
-                        while (true)
-                        {
-                            lock (this)
-                            {
-                                while (buffer.Count == 0)
-                                {
-                                    can_exit = true;
-                                    Monitor.Wait(this);
-                                }
-                                can_exit = false;
-                                string printPattern = @"^(?<NonString>\s*PRINT[^ ]* ?)(?<String>.+)?$";
-                                string dataPattern = @"^(?<NonString>\s*DATA(FORM)? ?)(?<String>.+)?$";
-                                for (int i = 0; i < buffer.Count; i++)
-                                {
-                                    ERBInfo erbinfo = buffer.Dequeue();
-                                    if (!erbinfo.DATA)
-                                    {
-                                        Match printMatch = Regex.Match(erbinfo.Text, printPattern);
-                                        StringDictionary.Add(erbinfo.LineNo, new LineInfo(printMatch.Groups["String"].Value, erbinfo.Text.Contains("FORM"), erbinfo.Text.Contains("FORMS")));
-                                        NonStringDictionary.Add(erbinfo.LineNo, printMatch.Groups["NonString"].Value);
-                                    }
-                                    else
-                                    {
-                                        foreach (var listinfo in erbinfo.Data_list)
-                                        {
-                                            for (int a = 1; a <= listinfo.Forms.Length; a++)
-                                            {
-                                                if (listinfo.Forms[a - 1].Contains("DATAFORM"))
-                                                {
-                                                    Match dataMatch = Regex.Match(listinfo.Forms[a - 1], dataPattern);
-                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(dataMatch.Groups["String"].Value, listinfo.Line, true, false));
-                                                    NonStringDictionary.Add(listinfo.Line + a, dataMatch.Groups["NonString"].Value);
-                                                }
-                                                else if (listinfo.Forms[a - 1].Contains("DATA"))
-                                                {
-                                                    string[] line = listinfo.Forms[a - 1].Split(new string[] { "DATA" }, StringSplitOptions.None);
-                                                    string _str = line[0] + "DATA";
-                                                    string str = line[1] ?? "";
-                                                    StringDictionary.Add(listinfo.Line + a, new LineInfo(str, listinfo.Line, false, false));
-                                                    NonStringDictionary.Add(listinfo.Line + a, _str);
-                                                }
-                                                else
-                                                {
-                                                    throw new Exception("DATALIST를 인식할수 없습니다");
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    #endregion
-                    de_thread.Start();//스레드 시작
+                    int lineNo = -1;
+
                     while (!reader.EndOfStream)
                     {
                         string temp = reader.ReadLine();
-                        count++;
+                        lineNo++;
                         OriginalTexts.Add(temp);//원본 저장
-                        temp = temp.Contains(';') ? temp.Substring(0, temp.IndexOf(';')) : temp;//주석제거
-                        if (temp.Contains("PRINT"))
+
+                        var match = ParseLine(temp);
+
+                        if (match.Success)
                         {
-                            if (temp.Contains("PRINTDATA"))//DATA형
+                            if (match.Groups["FunctionCode"].Value == "PRINTDATA")//PRINTDATA문
                             {
-                                List<DataListInfo> printdata = new List<DataListInfo>();
-                                List<string> datalist = new List<string>();
-                                int line = count;
+                                int printDataLine = lineNo;
+                                int listLine = -1;
                                 bool exit = false;
-                                bool list = false;
                                 while (!exit)
                                 {
                                     temp = reader.ReadLine();
-                                    count++;
+                                    lineNo++;
                                     OriginalTexts.Add(temp);
-                                    switch (temp.Split(' ')[0].Trim())
+                                    match = ParseLine(temp);
+                                    if (!match.Success)
+                                        continue;
+                                    switch (match.Groups["FunctionCode"].Value)
                                     {
                                         case ("DATALIST"):
                                             {
-                                                list = true;
-                                                line = count;
+                                                listLine = lineNo;
                                                 break;
                                             }
                                         case ("DATA"):
                                             {
-                                                datalist.Add(temp);
+                                                NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
+                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, false, printDataLine, listLine));
                                                 break;
                                             }
                                         case ("DATAFORM"):
                                             {
-                                                datalist.Add(temp);
+                                                NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
+                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, true, printDataLine, listLine));
                                                 break;
                                             }
                                         case ("ENDLIST"):
                                             {
-                                                printdata.Add(new DataListInfo(datalist.ToArray(), line));
-                                                datalist.Clear();
+                                                listLine = -1;
                                                 break;
                                             }
                                         case ("ENDDATA"):
                                             {
-                                                if (!list)
-                                                {
-                                                    printdata.Add(new DataListInfo(datalist.ToArray(), line));
-                                                    datalist.Clear();
-                                                }
                                                 exit = true;
                                                 break;
                                             }
                                         default:
                                             {
-                                                throw new Exception("구문분석중 오류가 발생되었습니다.\r\n줄수:" + count + "\r\n처리중인 문자열:" + temp);
+                                                throw new Exception("구문분석중 오류가 발생되었습니다.\r\n줄수:" + lineNo + "\r\n처리중인 문자열:" + temp);
                                             }
                                     }
                                 }
-                                lock (this)
-                                {
-                                    buffer.Enqueue(new ERBInfo(printdata));
-                                    Monitor.Pulse(this);
-                                }
+
                             }
-                            else {//일반 PRINT문
-                                lock (this)
-                                {
-                                    buffer.Enqueue(new ERBInfo(temp, count));
-                                    Monitor.Pulse(this);
-                                }
+                            else
+                            {//일반 PRINT문
+                                string code = match.Groups["FunctionCode"].Value;
+                                NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
+                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS")));
                             }
                         }
                     }
-                    while (!can_exit) { Thread.Sleep(10); }//버퍼처리가 끝날때까지 기다림 
-                    de_thread.Abort();
                 }
             }
             return;
         }
 
-        Queue<ERBInfo> buffer = new Queue<ERBInfo>();
+        public Match ParseLine(string rawLine)
+        {
+            return Regex.Match(rawLine, @"(?<Left>\s*(?<FunctionCode>(PRINT[^\s;]*)|(DATA((FORM)|(LIST))?)|(ENDDATA)|(ENDLIST)) ?)(?<Content>[^;]+)?(?<Right>;.*)?");
+        }
+        
         public void Save()
         {
             using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
@@ -187,7 +125,7 @@ namespace Fillter
                 {
                     foreach (var a in StringDictionary)
                     {
-                        string temp = NonStringDictionary[a.Key] + a.Value.Str;
+                        string temp = NonStringDictionary[a.Key].Item1 + a.Value.Str + NonStringDictionary[a.Key].Item2;
                         OriginalTexts[a.Key] = temp;
                     }
                     foreach (var a in OriginalTexts)
@@ -198,50 +136,14 @@ namespace Fillter
                 }
             }
         }
-        private List<string> originalTexts = new List<string>();
-        private Dictionary<int, LineInfo> stringDictionary = new Dictionary<int, LineInfo>();
-        private Dictionary<int, string> nonStringDictionary = new Dictionary<int, string>();
         private string erbPath;
         private Encoding erbEncoding;
 
-        public List<string> OriginalTexts
-        {
-            get
-            {
-                return originalTexts;
-            }
+        private List<string> OriginalTexts { get; set; } = new List<string>();
 
-            set
-            {
-                originalTexts = value;
-            }
-        }
+        public Dictionary<int, LineInfo> StringDictionary { get; private set; } = new Dictionary<int, LineInfo>();
 
-        public Dictionary<int, LineInfo> StringDictionary
-        {
-            get
-            {
-                return stringDictionary;
-            }
-
-            set
-            {
-                stringDictionary = value;
-            }
-        }
-
-        public Dictionary<int, string> NonStringDictionary
-        {
-            get
-            {
-                return nonStringDictionary;
-            }
-
-            set
-            {
-                nonStringDictionary = value;
-            }
-        }
+        public Dictionary<int, Tuple<string, string>> NonStringDictionary { get; private set; } = new Dictionary<int, Tuple<string, string>>();
 
         public string ErbPath
         {
@@ -267,83 +169,6 @@ namespace Fillter
             {
                 erbEncoding = value;
             }
-        }
-
-        class DataListInfo
-        {
-            public string[] Forms { get; }
-            public int Line { get; }
-            public DataListInfo(string[] forms, int line)
-            {
-                Forms = forms;
-                Line = line;
-                //line:부모줄번호
-            }
-        }
-        class ERBInfo
-        {
-            public string Text { get; }
-
-            public int LineNo { get; }
-
-            public bool DATA { get; private set; }
-
-            public List<DataListInfo> Data_list { get; }
-
-            public ERBInfo(string text, int line)
-            {
-                Text = text;
-                LineNo = line;
-                DATA = false;
-            }
-            public ERBInfo(List<DataListInfo> data_list)
-            {
-                Data_list = data_list;
-                DATA = true;
-            }
-        }
-    }
-    public class LineInfo
-    {
-        private bool korean;
-        private bool japanese;
-        private string str;
-
-        public string Str
-        {
-            get
-            {
-                return str;
-            }
-            set
-            {
-                str = value;
-                GetLang.Get(value, out korean, out japanese);
-            }
-        }
-
-        public bool IsForm { get; }
-        public bool IsFormS { get; }
-        public bool IsList { get; }
-        public int ParentLine { get; }
-        public bool Korean => korean;
-        public bool Japanese => japanese;
-
-        public LineInfo(string str, bool isForm, bool isFormS)
-        {
-            Str = str;
-            IsList = false;
-            IsForm = !isFormS && isForm;
-            IsFormS = isFormS;
-        }
-        public LineInfo(string str, int parentLine, bool isForm, bool isFormS)
-        {
-            //parent_line 부모 DATALIST의 줄수이며 이것으로 같은 FORM인지 구분
-            Str = str;
-            ParentLine = parentLine;
-            IsList = true;
-            IsForm = isForm;
-            IsFormS = isFormS;
         }
     }
     static class GetLang
