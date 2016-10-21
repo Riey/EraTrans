@@ -26,7 +26,7 @@ namespace 에라번역
             }
         }
 
-        public string GetLine(int linenum, string linetext)
+        public string GetLine(long linenum, string linetext)
         {
             StringBuilder result = new StringBuilder();
             int count = 0;

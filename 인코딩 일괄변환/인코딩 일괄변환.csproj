@@ -120,12 +120,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST "C:\에라번역\EraTrans\" rd /s /q "C:\에라번역\EraTrans\"
-MD "C:\에라번역\EraTrans\"
-MD "C:\에라번역\EraTrans\도구\"
-IF NOT EXIST "C:\에라번역\에라번역\" MD "C:\에라번역\에라번역\"
-IF NOT EXIST "C:\에라번역\에라번역\도구\" MD "C:\에라번역\에라번역\도구\"
-copy "$(TargetDir)인코딩 일괄변환.exe" "C:\에라번역\에라번역\도구\"
+    <PostBuildEvent>copy "$(TargetDir)인코딩 일괄변환.exe" "C:\에라번역\에라번역\도구\"
 copy "$(TargetDir)readme.txt" "C:\에라번역\에라번역\도구\"
 copy "$(TargetDir)인코딩 일괄변환.exe" "C:\에라번역\EraTrans\도구\"
 copy "$(TargetDir)readme.txt" "C:\에라번역\EraTrans\도구\"</PostBuildEvent>
