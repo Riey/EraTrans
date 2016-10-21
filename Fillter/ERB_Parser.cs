@@ -49,7 +49,8 @@ namespace Fillter
 
                         if (match.Success)
                         {
-                            if (match.Groups["FunctionCode"].Value == "PRINTDATA")//PRINTDATA문
+                            string code = match.Groups["FunctionCode"].Value;
+                            if (Regex.IsMatch(code, "PRINTDATA[KD]?[LW]?"))//PRINTDATA문
                             {
                                 int printDataLine = lineNo;
                                 int listLine = -1;
@@ -64,29 +65,29 @@ namespace Fillter
                                         continue;
                                     switch (match.Groups["FunctionCode"].Value)
                                     {
-                                        case ("DATALIST"):
+                                        case "DATALIST":
                                             {
                                                 listLine = lineNo;
                                                 break;
                                             }
-                                        case ("DATA"):
+                                        case "DATA":
                                             {
                                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
                                                 StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, false, printDataLine, listLine));
                                                 break;
                                             }
-                                        case ("DATAFORM"):
+                                        case "DATAFORM":
                                             {
                                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
                                                 StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, true, printDataLine, listLine));
                                                 break;
                                             }
-                                        case ("ENDLIST"):
+                                        case "ENDLIST":
                                             {
                                                 listLine = -1;
                                                 break;
                                             }
-                                        case ("ENDDATA"):
+                                        case "ENDDATA":
                                             {
                                                 exit = true;
                                                 break;
@@ -97,14 +98,19 @@ namespace Fillter
                                             }
                                     }
                                 }
-
+                            }
+                            else if (Regex.IsMatch(code, "PRINTBUTTON[C(LC)]"))
+                            {
+                                var buttonMatch = Regex.Match(match.Groups["Content"].Value, @"""(?<PrintText>[^""]*)(?<Right>"".+)");
+                                NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value + "\"", buttonMatch.Groups["Right"].Value + match.Groups["Right"].Value));
+                                StringDictionary.Add(lineNo, new LineInfo(buttonMatch.Groups["PrintText"].Value, false, false));
                             }
                             else
                             {//일반 PRINT문
-                                string code = match.Groups["FunctionCode"].Value;
                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
                                 StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS")));
                             }
+
                         }
                     }
                 }
@@ -114,7 +120,7 @@ namespace Fillter
 
         public Match ParseLine(string rawLine)
         {
-            return Regex.Match(rawLine, @"(?<Left>\s*(?<FunctionCode>(PRINT[^\s;]*)|(DATA((FORM)|(LIST))?)|(ENDDATA)|(ENDLIST)) ?)(?<Content>[^;]+)?(?<Right>;.*)?");
+            return Regex.Match(rawLine, @"^(?<Left>\s*(?<FunctionCode>(PRINTSINGLE(V|S|(FORM)|(FORMS))?[KD]?)|(PRINTBUTTON(C|(LC))?)|(PRINTPLAIN(FORM)?)|(PRINTDATA[KD]?[LW]?)|(PRINT(V|S|(FORM)|(FORMS))?[KD]?[LW]?)|(DATA((FORM)|(LIST))?)|(ENDDATA)|(ENDLIST)) ?)(?<Content>[^;]+)?(?<Right>;.*)?$");
         }
         
         public void Save()

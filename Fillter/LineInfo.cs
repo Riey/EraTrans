@@ -40,6 +40,7 @@ namespace Fillter
             IsList = false;
             IsForm = !isFormS && isForm;
             IsFormS = isFormS;
+            ListLine = PrintDataLine = -1;
         }
         public LineInfo(string str, bool isForm, int printDataLine, int listLine = -1)
         {
