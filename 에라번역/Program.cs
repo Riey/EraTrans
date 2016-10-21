@@ -20,6 +20,7 @@ namespace 에라번역
         [STAThread]
         static void Main(string[] args)
         {
+            Properties.Settings.Default.Reload();
             if (!Directory.Exists(ResourceFolderPath))
                 Directory.CreateDirectory(ResourceFolderPath);
             if (!Directory.Exists(RootPath + "Backup"))
@@ -57,7 +58,7 @@ namespace 에라번역
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
                 fs.Flush();
                 fs.Dispose();
-                Trace.Assert(false);
+                Trace.Assert(false, e.Message);
             }
         }
     }

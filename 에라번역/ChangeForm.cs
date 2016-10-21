@@ -40,10 +40,6 @@ namespace 에라번역
             DialogResult result = MessageBox.Show(line + "의\r\n" + original + "\t\t을\r\n" + Translated_Text.Text + "\t\t로 번역하시겠습니까?", "번역", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                if(Translated_Text.Text.First()!=' ')
-                {
-                    Translated_Text.Text = " " + Translated_Text.Text;
-                }
                 TranslatedText = Translated_Text.Text;
             }
             if (result == DialogResult.No)

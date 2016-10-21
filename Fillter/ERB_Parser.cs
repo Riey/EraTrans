@@ -181,7 +181,7 @@ namespace Fillter
         Queue<ERBInfo> buffer = new Queue<ERBInfo>();
         public void Save()
         {
-            using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+            using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
                 {

@@ -54,6 +54,10 @@ namespace 에라번역
             {
                 return Config.GetValue<LineSetting>(nameof(LineSetting));
             }
+            private set
+            {
+                Config.SetValue(nameof(LineSetting), value);
+            }
         }
 
         public Encoding ReadEncoding
@@ -65,6 +69,18 @@ namespace 에라번역
             set
             {
                 Config.SetValue(nameof(ReadEncoding), value);
+            }
+        }
+
+        public bool IgnoreBlankERB
+        {
+            get
+            {
+                return Config.GetValue<bool>(nameof(IgnoreBlankERB));
+            }
+            set
+            {
+                Config.SetValue(nameof(IgnoreBlankERB), value);
             }
         }
         
@@ -107,15 +123,23 @@ namespace 에라번역
             });
 
             if (!config.HasKey(nameof(KoreanCB)))
-                config[nameof(KoreanCB)] = CheckState.Checked.ToString();
+                KoreanCB = CheckState.Checked;
+
             if (!config.HasKey(nameof(JapaneseCB)))
-                config[nameof(JapaneseCB)] = CheckState.Checked.ToString();
+                JapaneseCB = CheckState.Checked;
+
             if (!config.HasKey(nameof(etcCB)))
-                config[nameof(etcCB)] = CheckState.Checked.ToString();
+                etcCB = CheckState.Checked;
+
             if (!config.HasKey(nameof(LineSetting)))
-                config[nameof(LineSetting)] = LineSetting.Default.ToString();
+                LineSetting = LineSetting.Default;
+
             if (!config.HasKey(nameof(ReadEncoding)))
-                config[nameof(ReadEncoding)] = Encoding.UTF8.WebName.ToUpper();
+                ReadEncoding = Encoding.UTF8;
+
+            if (!config.HasKey(nameof(IgnoreBlankERB)))
+                IgnoreBlankERB = true;
+
         }
     }
 }

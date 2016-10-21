@@ -57,6 +57,8 @@ namespace 에라번역
                 try
                 {
                     parser = new ERB_Parser(path, setting.ReadEncoding);
+                    if (parser.StringDictionary.Count == 0 && setting.IgnoreBlankERB)
+                        return;
                     lock (parsers)
                     {
                         parsers.Add(path, parser); 
@@ -128,48 +130,6 @@ namespace 에라번역
                 return;
             var files = Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*", SearchOption.AllDirectories).Where(file => Path.GetExtension(file).ToUpper() == ".ERB").ToArray();
             Translate(files);
-        }
-    }
-    public class CrashLog
-    {
-        public int line
-        {
-            get
-            {
-                return log1.LineNum;
-            }
-        }
-        public string 한일
-        {
-            get
-            {
-                return log1.했던일.ToString();
-            }
-        }
-        public string 원본
-        {
-            get
-            {
-                return log1.Str1;
-            }
-        }
-        public ChangeLog log1;
-        public ChangeLog log2;
-        public ChangeLog new_log;
-        public CrashLog(ChangeLog log1,ChangeLog log2)
-        {
-            this.log1 = log1;
-            this.log2 = log2;
-        }
-    }
-    class LogInfo
-    {
-        public ChangeLog.행동 한일;
-        public int 줄번호;
-        public LogInfo(ChangeLog.행동 한일, int 줄번호)
-        {
-            this.한일 = 한일;
-            this.줄번호 = 줄번호;
         }
     }
 }

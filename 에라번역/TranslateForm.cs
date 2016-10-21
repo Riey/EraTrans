@@ -27,6 +27,9 @@ namespace 에라번역
 
         private void Translate_Form_Load(object sender, EventArgs e)
         {
+            DesktopLocation = Properties.Settings.Default.PreviousTranslateFormLocation;
+            Size = Properties.Settings.Default.PreviousTranslateFormSize;
+
             korean_cb.CheckState = setting.KoreanCB;
             japanese_cb.CheckState = setting.JapaneseCB;
             etc_cb.CheckState = setting.etcCB;
@@ -194,10 +197,10 @@ namespace 에라번역
 
         private void Save()
         {
-            Parallel.ForEach(parsers, parser =>
+            foreach (var parser in parsers)
             {
                 parser.Value.Save();
-            });
+            }
             MessageBox.Show("저장완료!");
             changed = false;
         }
@@ -213,6 +216,9 @@ namespace 에라번역
             }
             logWatcher.Abort();
             GC.Collect();
+            Properties.Settings.Default.PreviousTranslateFormLocation = DesktopLocation;
+            Properties.Settings.Default.PreviousTranslateFormSize = Size;
+            Properties.Settings.Default.Save();
         }
         private void 일괄번역버튼_Click(object sender, EventArgs e)
         {
@@ -330,6 +336,13 @@ namespace 에라번역
         private void 빈줄표시_CheckedChanged(object sender, EventArgs e)
         {
             word_update();
+        }
+
+        private void TranslateForm_SizeChanged(object sender, EventArgs e)
+        {
+            word_list.Width = Width - 174;
+            word_list.Height = Height - 64;
+            toolPanal.Location = new System.Drawing.Point(Width - 154, word_list.Location.Y);
         }
     }
 }
