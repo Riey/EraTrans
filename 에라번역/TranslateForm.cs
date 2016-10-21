@@ -16,6 +16,7 @@ namespace 에라번역
         #region Const Value
         private const string ERB_TAG = "ERB";
         private const string LIST_TAG = "LIST";
+        private const string PRINTDATA_TAG = "PDAT";
         #endregion
         public TranslateForm(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
         {
@@ -67,7 +68,7 @@ namespace 에라번역
                 }
 
             }
-            catch(ObjectDisposedException)
+            catch(Exception)
             {
                 return;
             }
@@ -118,6 +119,48 @@ namespace 에라번역
             }
         }
 
+        private void AddNode(NodeInfo nodeInfo, TreeNodeCollection nodes, TreeNode erbNode)
+        {
+            var node = new TreeNode();
+            node.Tag = nodeInfo;
+            node.Text = nodeInfo.GetString(setting.LineSetting);
+            if (nodeInfo.LineInfo.IsData)
+            {
+                if (!erbNode.Nodes.ContainsKey("PRINTDATA|" + nodeInfo.LineInfo.PrintDataLine + 1))
+                {
+                    TreeNode printNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.PrintDataLine + 1, "PRINTDATA"));
+                    printNode.Name = "PRINTDATA|" + nodeInfo.LineInfo.PrintDataLine + 1;
+                    printNode.Tag = PRINTDATA_TAG;
+                    erbNode.Nodes.Add(printNode);
+                }
+                {
+                    var printNode = erbNode.Nodes.Find("PRINTDATA|" + nodeInfo.LineInfo.PrintDataLine + 1, false)[0];
+                    if (nodeInfo.LineInfo.IsList)
+                    {
+                        if (!printNode.Nodes.ContainsKey("DATALIST|" + nodeInfo.LineInfo.ListLine + 1))
+                        {
+                            TreeNode listNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.ListLine + 1, "DATALIST"));
+                            listNode.Name = "DATALIST|" + nodeInfo.LineInfo.ListLine + 1;
+                            listNode.Tag = LIST_TAG;
+                            printNode.Nodes.Add(listNode);
+                        }
+                        {
+                            var listNode = printNode.Nodes.Find("DATALIST|" + nodeInfo.LineInfo.ListLine + 1, false)[0];
+                            listNode.Nodes.Add(node);
+                        }
+                    }
+                    else
+                    {
+                        printNode.Nodes.Add(node);
+                    }
+                }
+            }
+            else
+            {
+                erbNode.Nodes.Add(node);
+            }
+        }
+
         private void AddErbNodes(Dictionary<string, TreeNode> erbNodes)
         {
             foreach(var parser in parsers)
@@ -132,26 +175,7 @@ namespace 에라번역
                     {
                         continue;
                     }
-                    var nodeInfo = new NodeInfo(lineInfo.Key, parser.Key, lineInfo.Value);
-                    var node = new TreeNode();
-                    node.Tag = nodeInfo;
-                    node.Text = nodeInfo.GetString(setting.LineSetting);
-                    if(nodeInfo.Info.IsList)
-                    {
-                        if(!erbNode.Nodes.ContainsKey("DATALIST|" + nodeInfo.Info.ParentLine))
-                        {
-                            TreeNode listNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.Info.ParentLine, " DATALIST"));
-                            listNode.Name = "DATALIST|" + nodeInfo.Info.ParentLine;
-                            listNode.Tag = LIST_TAG;
-                            erbNode.Nodes.Add(listNode);
-                        }
-                        var list_node = erbNode.Nodes.Find("DATALIST|" + nodeInfo.Info.ParentLine, false).First();
-                        list_node.Nodes.Add(node);
-                    }
-                    else
-                    {
-                        erbNode.Nodes.Add(node);
-                    }
+                    AddNode(new NodeInfo(lineInfo.Key, parser.Key, lineInfo.Value), word_list.Nodes, erbNode);
                 }
             }
         }
@@ -170,7 +194,7 @@ namespace 에라번역
                 cf.ShowDialog();
                 if (ChangeForm.TranslatedText == null)
                     continue;
-                logs.Push(new ChangeLog(item.ErbPath, item.Info.Str, ChangeForm.TranslatedText));
+                logs.Push(new ChangeLog(item.ErbPath, item.LineInfo.Str, ChangeForm.TranslatedText));
                 parsers[item.ErbPath].StringDictionary[item.LineNo].Str = ChangeForm.TranslatedText;
                 Node.Text = item.GetString(setting.LineSetting);
             }
@@ -282,27 +306,50 @@ namespace 에라번역
                 Save();
             }
         }
+       
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
             if (word_list.SelectedNodes.Count == 0)
                 return;
             word_list.BeginUpdate();
-            foreach (TreeNode Node in word_list.SelectedNodes)
+
+            Queue<TreeNode> temp = new Queue<TreeNode>();
+
+            Action<TreeNode> AddNode = null;
+            AddNode = 
+                treeNode =>
             {
-                if (!(Node.Tag is NodeInfo))
-                    continue;
-                var item = Node.Tag as NodeInfo;
-                if (string.IsNullOrWhiteSpace(item.Info.Str))
-                    continue;
-                string temp = AutoTransFillter.TranslateWithFillter(item.Info);
-                if (temp != null)
+                if (!(treeNode.Tag is NodeInfo))
                 {
-                    logs.Push(new ChangeLog(item.ErbPath, item.LineNo, item.Info.Str, temp));
-                    item.Info.Str = temp;
-                    Node.Text = item.GetString(setting.LineSetting);
+                    foreach (TreeNode node in treeNode.Nodes)
+                        AddNode(node);
+                }
+                else
+                    temp.Enqueue(treeNode);
+            };
+
+            foreach (TreeNode node in word_list.SelectedNodes)
+            {
+                AddNode(node);
+            }
+
+
+            while (temp.Count > 0)
+            {
+                var node = temp.Dequeue();
+                var item = node.Tag as NodeInfo;
+                if (string.IsNullOrWhiteSpace(item.LineInfo.Str))
+                    continue;
+                string trans = AutoTransFillter.TranslateWithFillter(item.LineInfo);
+                if (trans != null)
+                {
+                    logs.Push(new ChangeLog(item.ErbPath, item.LineNo, item.LineInfo.Str, trans));
+                    item.LineInfo.Str = trans;
+                    node.Text = item.GetString(setting.LineSetting);
                 }
             }
+
             word_list.EndUpdate();
             changed = true;
         }
