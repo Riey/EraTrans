@@ -32,6 +32,8 @@ namespace 에라번역
                         stringTemp.Add(sb.ToString());
                         sb.Clear();
                         seperatorTemp.Add(seperators[index]);
+                        i -= 1;
+                        i += seperators[index].Length;
                     }
                 }
                 stringTemp.Add(sb.ToString());
