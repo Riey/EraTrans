@@ -31,18 +31,20 @@ namespace Fillter
         public bool IsList { get; }
         public int PrintDataLine { get; }
         public int ListLine { get; }
+        public string OriginalString { get; }
         public bool Korean => korean;
         public bool Japanese => japanese;
 
-        public LineInfo(string str, bool isForm, bool isFormS)
+        public LineInfo(string str, bool isForm, bool isFormS, string originalString)
         {
             Str = str;
             IsList = false;
             IsForm = !isFormS && isForm;
             IsFormS = isFormS;
             ListLine = PrintDataLine = -1;
+            OriginalString = originalString ?? str;
         }
-        public LineInfo(string str, bool isForm, int printDataLine, int listLine = -1)
+        public LineInfo(string str, bool isForm, string originalString, int printDataLine, int listLine = -1)
         {
             //parent_line 부모 DATALIST의 줄수이며 이것으로 같은 FORM인지 구분
             Str = str;
@@ -52,6 +54,7 @@ namespace Fillter
             IsList = listLine != -1;
             IsForm = isForm;
             IsFormS = false;
+            OriginalString = originalString ?? str;
         }
 
         public override string ToString()

@@ -39,12 +39,31 @@ namespace Fillter
                     ErbEncoding = reader.CurrentEncoding;
                     int lineNo = -1;
 
+                    string originalText = null;
+                    string temp = null;
+
+                    Action ReadNext = null;
+                    ReadNext = () =>
+                    {
+                        temp = reader.ReadLine();
+                        lineNo++;
+                        var original = IsOriginalLine(temp);
+                        if (original.Success)
+                        {
+                            originalText = original.Groups[1].Value;
+                            temp = reader.ReadLine();
+                            lineNo++;
+                        }
+                        else
+                        {
+                            originalText = null;
+                        }
+                        OriginalTexts.Add(lineNo, temp);
+                    };
+
                     while (!reader.EndOfStream)
                     {
-                        string temp = reader.ReadLine();
-                        lineNo++;
-                        OriginalTexts.Add(temp);//원본 저장
-
+                        ReadNext();
                         var match = ParseLine(temp);
 
                         if (match.Success)
@@ -57,9 +76,7 @@ namespace Fillter
                                 bool exit = false;
                                 while (!exit)
                                 {
-                                    temp = reader.ReadLine();
-                                    lineNo++;
-                                    OriginalTexts.Add(temp);
+                                    ReadNext();
                                     match = ParseLine(temp);
                                     if (!match.Success)
                                         continue;
@@ -73,13 +90,13 @@ namespace Fillter
                                         case "DATA":
                                             {
                                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
-                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, false, printDataLine, listLine));
+                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, false, originalText, printDataLine, listLine));
                                                 break;
                                             }
                                         case "DATAFORM":
                                             {
                                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
-                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, true, printDataLine, listLine));
+                                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, true, originalText, printDataLine, listLine));
                                                 break;
                                             }
                                         case "ENDLIST":
@@ -103,12 +120,12 @@ namespace Fillter
                             {
                                 var buttonMatch = Regex.Match(match.Groups["Content"].Value, @"""(?<PrintText>[^""]*)(?<Right>"".+)");
                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value + "\"", buttonMatch.Groups["Right"].Value + match.Groups["Right"].Value));
-                                StringDictionary.Add(lineNo, new LineInfo(buttonMatch.Groups["PrintText"].Value, false, false));
+                                StringDictionary.Add(lineNo, new LineInfo(buttonMatch.Groups["PrintText"].Value, false, false, originalText));
                             }
                             else
                             {//일반 PRINT문
                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
-                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS")));
+                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS"),originalText));
                             }
 
                         }
@@ -118,9 +135,16 @@ namespace Fillter
             return;
         }
 
+        private Regex originalRegex = new Regex(@";OriginalString : (?<Original>.*)", RegexOptions.Compiled);
+        public Match IsOriginalLine(string rawLine)
+        {
+            return originalRegex.Match(rawLine);
+        }
+
+        private Regex printLineRegex = new Regex(@"^(?<Left>\s*(?<FunctionCode>(PRINTSINGLE(V|S|(FORM)|(FORMS))?[KD]?)|(PRINTBUTTON(C|(LC))?)|(PRINTPLAIN(FORM)?)|(PRINTDATA[KD]?[LW]?)|(PRINT(V|S|(FORM)|(FORMS))?[KD]?[LW]?)|(DATA((FORM)|(LIST))?)|(ENDDATA)|(ENDLIST)) ?)(?<Content>[^;]+)?(?<Right>;.*)?$", RegexOptions.Compiled);
         public Match ParseLine(string rawLine)
         {
-            return Regex.Match(rawLine, @"^(?<Left>\s*(?<FunctionCode>(PRINTSINGLE(V|S|(FORM)|(FORMS))?[KD]?)|(PRINTBUTTON(C|(LC))?)|(PRINTPLAIN(FORM)?)|(PRINTDATA[KD]?[LW]?)|(PRINT(V|S|(FORM)|(FORMS))?[KD]?[LW]?)|(DATA((FORM)|(LIST))?)|(ENDDATA)|(ENDLIST)) ?)(?<Content>[^;]+)?(?<Right>;.*)?$");
+            return printLineRegex.Match(rawLine);
         }
         
         public void Save()
@@ -129,14 +153,18 @@ namespace Fillter
             {
                 using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
                 {
-                    foreach (var a in StringDictionary)
+                    foreach(var original in OriginalTexts)
                     {
-                        string temp = NonStringDictionary[a.Key].Item1 + a.Value.Str + NonStringDictionary[a.Key].Item2;
-                        OriginalTexts[a.Key] = temp;
-                    }
-                    foreach (var a in OriginalTexts)
-                    {
-                        writer.WriteLine(a);
+                        int lineNo = original.Key;
+                        if (StringDictionary.ContainsKey(lineNo))
+                        {
+                            writer.WriteLine(";OriginalString : " + StringDictionary[lineNo].OriginalString);
+                            writer.WriteLine(NonStringDictionary[lineNo].Item1 + StringDictionary[lineNo].Str + NonStringDictionary[lineNo].Item2);
+                        }
+                        else
+                        {
+                            writer.WriteLine(OriginalTexts[lineNo]);
+                        }
                     }
                     writer.Flush();
                 }
@@ -145,7 +173,7 @@ namespace Fillter
         private string erbPath;
         private Encoding erbEncoding;
 
-        private List<string> OriginalTexts { get; set; } = new List<string>();
+        private Dictionary<int,string> OriginalTexts { get; set; } = new Dictionary<int, string>();
 
         public Dictionary<int, LineInfo> StringDictionary { get; private set; } = new Dictionary<int, LineInfo>();
 

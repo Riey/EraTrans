@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fillter;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using YeongHun.EZTrans;
@@ -8,21 +9,18 @@ namespace 에라번역
     public partial class ChangeForm : Form
     {
         public static string TranslatedText = null;
-        string line;
-        string original;
         bool exit = false;
         public ChangeForm(NodeInfo item)
         {
             TranslatedText = null;
-            line = item.ErbFileName + "\r\n" + item.LineNo + "번째줄";
-            original = item.LineInfo.Str;
             InitializeComponent();
+            Original_Text.Text = item.LineInfo.OriginalString;
+            Translated_Text.Text = item.LineInfo.Str;
+            현재줄.Text = item.ErbFileName + Environment.NewLine + item.LineNo + "번째줄";
         }
 
         private void Change_Form_Load(object sender, EventArgs e)
         {
-            Original_Text.Text = original;
-            현재줄.Text = line;
         }
 
         private void Change_Form_FormClosing(object sender, FormClosingEventArgs e)
@@ -37,7 +35,7 @@ namespace 에라번역
                 TranslatedText = null;
                 return;
             }
-            DialogResult result = MessageBox.Show(line + "의\r\n" + original + "\t\t을\r\n" + Translated_Text.Text + "\t\t로 번역하시겠습니까?", "번역", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show(현재줄.Text + "의\r\n" + Original_Text.Text + "\t\t을\r\n" + Translated_Text.Text + "\t\t로 번역하시겠습니까?", "번역", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
                 TranslatedText = Translated_Text.Text;
