@@ -77,7 +77,7 @@ namespace 에라번역
                         }
                         foreach (var temp in diclog)
                         {
-                            parsers[log.ErbName].StringDictionary[temp.Item1] = new LineInfo(temp.Item3, temp.Item2.IsForm, temp.Item2.IsFormS);
+                            parsers[log.ErbName].StringDictionary[temp.Item1] = new LineInfo(temp.Item3, temp.Item2.IsForm, temp.Item2.IsFormS, temp.Item2.OriginalString);
                         }
                         cl = new ChangeLog(log.ErbName, log.Str2, log.Str1);
                         break;
