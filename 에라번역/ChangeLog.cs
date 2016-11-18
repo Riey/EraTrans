@@ -7,36 +7,47 @@ namespace 에라번역
     [Serializable]
     public class ChangeLog
     {
-        public enum 행동
+        public enum Action
         {
-            번역, 일괄번역
+            TRANSLATE, BATCH_TRANSLATE
         }
         public string ErbName { get; }
         public int LineNum { get; }
         public string Str1 { get; }
         public string Str2 { get; }
-        public 행동 했던일 { get; }
-        public ChangeLog(string erbName, int lineNum, string 원본, string 번역본) : this(erbName, lineNum, 원본, 번역본, 행동.번역)
+        public Action PreAction { get; }
+        /// <summary>
+        /// Normal Translate
+        /// </summary>
+        /// <param name="erbName"></param>
+        /// <param name="lineNum"></param>
+        /// <param name="original"></param>
+        /// <param name="translation"></param>
+        public ChangeLog(string erbName, int lineNum, string original, string translation) : this(erbName, lineNum, original, translation, Action.TRANSLATE)
         {
-            //번역용 생성자
         }
-        public ChangeLog(string erbName, string 원본, string 일괄번역본) : this(erbName, -1, 원본, 일괄번역본, 행동.일괄번역)
+        /// <summary>
+        /// Batch Translate
+        /// </summary>
+        /// <param name="erbName"></param>
+        /// <param name="original"></param>
+        /// <param name="batchTranslation"></param>
+        public ChangeLog(string erbName, string original, string batchTranslation) : this(erbName, -1, original, batchTranslation, Action.BATCH_TRANSLATE)
         {
-            //일괄번역용 생성자
         }
-        private ChangeLog(string erbName, int lineNum, string str1, string str2, 행동 했던일)
+        private ChangeLog(string erbName, int lineNum, string str1, string str2, Action preAction)
         {
             ErbName = erbName;
             LineNum = lineNum;
             Str1 = str1;
             Str2 = str2;
-            this.했던일 = 했던일;
+            PreAction = preAction;
         }
         public static bool Equals(ChangeLog log1, ChangeLog log2)
         {
             if (log1.ErbName != log2.ErbName)
                 return false;
-            if (log1.Str1 == log2.Str1 && log1.Str2 == log2.Str2 && log1.LineNum == log2.LineNum && log1.했던일 == log2.했던일)
+            if (log1.Str1 == log2.Str1 && log1.Str2 == log2.Str2 && log1.LineNum == log2.LineNum && log1.PreAction == log2.PreAction)
             {
                 return true;
             }
@@ -44,31 +55,32 @@ namespace 에라번역
         }
         public static ChangeLog Redo(ChangeLog log, Dictionary<string, ERB_Parser> parsers)
         {
-            switch (log.했던일)
+            switch (log.PreAction)
             {
-                case (행동.번역):
+                case (Action.TRANSLATE):
                     {
                         return Back(new ChangeLog(log.ErbName, log.LineNum, log.Str2, log.Str1), parsers);
                     }
-                case (행동.일괄번역):
+                case (Action.BATCH_TRANSLATE):
                     {
                         return Back(new ChangeLog(log.ErbName, log.Str2, log.Str1), parsers);
                     }
+                default:
+                    {
+                        throw new ArgumentException("행동을 알수없습니다.");
+                    }
             }
-            return null;
         }
         public static ChangeLog Back(ChangeLog log, Dictionary<string, ERB_Parser> parsers)
         {
-            ChangeLog cl;
-            switch (log.했던일)
+            switch (log.PreAction)
             {
-                case (행동.번역):
+                case (Action.TRANSLATE):
                     {
                         parsers[log.ErbName].StringDictionary[log.LineNum].Str = log.Str1;
-                        cl = new ChangeLog(log.ErbName, log.LineNum, log.Str2, log.Str1);
-                        break;
+                        return new ChangeLog(log.ErbName, log.LineNum, log.Str2, log.Str1);
                     }
-                case (행동.일괄번역):
+                case (Action.BATCH_TRANSLATE):
                     {
                         List<Tuple<int, LineInfo, string>> diclog = new List<Tuple<int, LineInfo,string>>();
                         foreach (var temp in parsers[log.ErbName].StringDictionary)
@@ -79,15 +91,13 @@ namespace 에라번역
                         {
                             parsers[log.ErbName].StringDictionary[temp.Item1] = new LineInfo(temp.Item3, temp.Item2.IsForm, temp.Item2.IsFormS, temp.Item2.OriginalString);
                         }
-                        cl = new ChangeLog(log.ErbName, log.Str2, log.Str1);
-                        break;
+                        return new ChangeLog(log.ErbName, log.Str2, log.Str1);
                     }
                 default:
                     {
                         throw new ArgumentException("행동을 알수없습니다.");
                     }
             }
-            return cl;
         }
     }
 }

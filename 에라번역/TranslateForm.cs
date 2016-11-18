@@ -80,7 +80,7 @@ namespace 에라번역
         private int GetLineCount()
         {
             int line = 0;
-            foreach(TreeNode erb_node in word_list.Nodes)
+            foreach(TreeNode erb_node in wordList.Nodes)
             {
                 foreach(TreeNode node in erb_node.Nodes)
                 {
@@ -103,9 +103,9 @@ namespace 에라번역
         }
         private void word_update()
         {
-            TreeNode Top = word_list.TopNode;
-            var extends = word_list.Nodes.Cast<TreeNode>().Where(node => node.IsExpanded).Select(node => node.Name).ToArray();
-            word_list.Nodes.Clear();
+            TreeNode Top = wordList.TopNode;
+            var extends = wordList.Nodes.Cast<TreeNode>().Where(node => node.IsExpanded).Select(node => node.Name).ToArray();
+            wordList.Nodes.Clear();
             var erbNodes = new Dictionary<string, TreeNode>();
 
             AddErbNodes(erbNodes);
@@ -115,10 +115,10 @@ namespace 에라번역
                 erbNodes[extend].Expand();
             }
 
-            word_list.Nodes.AddRange(erbNodes.Values.ToArray());
+            wordList.Nodes.AddRange(erbNodes.Values.ToArray());
             if(Top != null)
             {
-                word_list.TopNode = word_list.Nodes.Find(Top.Name, true).First();
+                wordList.TopNode = wordList.Nodes.Find(Top.Name, true).First();
             }
         }
 
@@ -178,17 +178,17 @@ namespace 에라번역
                     {
                         continue;
                     }
-                    AddNode(new NodeInfo(lineInfo.Key, parser.Key, lineInfo.Value), word_list.Nodes, erbNode);
+                    AddNode(new NodeInfo(lineInfo.Key, parser.Key, lineInfo.Value), wordList.Nodes, erbNode);
                 }
             }
         }
 
         private void 번역버튼_Click(object sender, EventArgs e)
         {
-            if (word_list.SelectedNodes.Count == 0)
+            if (wordList.SelectedNodes.Count == 0)
                 return;
-            word_list.BeginUpdate();
-            foreach (TreeNode Node in word_list.SelectedNodes)
+            wordList.BeginUpdate();
+            foreach (TreeNode Node in wordList.SelectedNodes)
             {
                 if (!(Node.Tag is NodeInfo))
                     continue;
@@ -201,7 +201,7 @@ namespace 에라번역
                 parsers[item.ErbPath].StringDictionary[item.LineNo].Str = ChangeForm.TranslatedText;
                 Node.Text = item.GetString(setting.LineSetting);
             }
-            word_list.EndUpdate();
+            wordList.EndUpdate();
             changed = true;
         }
 
@@ -249,7 +249,7 @@ namespace 에라번역
             BatchTrans bt = new BatchTrans(parsers, logs);
             bt.ShowDialog();
             changed = true;
-            Refresh_Word();
+            RefreshWord();
         }
 
         private void 실행취소버튼_Click(object sender, EventArgs e)
@@ -257,7 +257,7 @@ namespace 에라번역
             if (logs.Count > 0)
             {
                 back_logs.Push(ChangeLog.Back(_logs.Pop(), parsers));
-                    Refresh_Word();
+                    RefreshWord();
                 changed = true;
             }
         }
@@ -267,7 +267,7 @@ namespace 에라번역
             if (back_logs.Count > 0)
             {
                 _logs.Push(ChangeLog.Back(back_logs.Pop(), parsers));
-                    Refresh_Word();
+                    RefreshWord();
                 changed = true;
             }
         }
@@ -276,24 +276,24 @@ namespace 에라번역
         {
 
         }
-        private void Refresh_Word()
+        private void RefreshWord()
         {
-            word_list.BeginUpdate();
-            foreach (TreeNode erb_node in word_list.Nodes)
+            wordList.BeginUpdate();
+            foreach (TreeNode erb_node in wordList.Nodes)
             {
                 foreach (TreeNode node in erb_node.Nodes)
                 {
-                    if (node.Name.Split('|').First() == "DATALIST")
+                    if (!(node.Tag is NodeInfo))
                         continue;
                     NodeInfo nodeInfo = node.Tag as NodeInfo;
                     node.Text = nodeInfo.GetString(setting.LineSetting);
                 }
             }
-            word_list.EndUpdate();
+            wordList.EndUpdate();
         }
         private void 새로고침버튼_Click(object sender, EventArgs e)
         {
-            Refresh_Word();
+            RefreshWord();
         }
 
         private void word_list_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -316,9 +316,9 @@ namespace 에라번역
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
-            if (word_list.SelectedNodes.Count == 0)
+            if (wordList.SelectedNodes.Count == 0)
                 return;
-            word_list.BeginUpdate();
+            wordList.BeginUpdate();
 
             Queue<TreeNode> temp = new Queue<TreeNode>();
 
@@ -335,7 +335,7 @@ namespace 에라번역
                     temp.Enqueue(treeNode);
             };
 
-            foreach (TreeNode node in word_list.SelectedNodes)
+            foreach (TreeNode node in wordList.SelectedNodes)
             {
                 AddNode(node);
             }
@@ -356,7 +356,7 @@ namespace 에라번역
                 }
             }
 
-            word_list.EndUpdate();
+            wordList.EndUpdate();
             changed = true;
         }
         #region Field
@@ -387,9 +387,9 @@ namespace 에라번역
 
         private void TranslateForm_SizeChanged(object sender, EventArgs e)
         {
-            word_list.Width = Width - 174;
-            word_list.Height = Height - 64;
-            toolPanal.Location = new System.Drawing.Point(Width - 154, word_list.Location.Y);
+            wordList.Width = Width - 174;
+            wordList.Height = Height - 64;
+            toolPanal.Location = new System.Drawing.Point(Width - 154, wordList.Location.Y);
         }
     }
 }

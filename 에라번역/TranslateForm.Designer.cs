@@ -41,7 +41,7 @@
             this.전체줄수 = new System.Windows.Forms.TextBox();
             this.자동번역버튼 = new System.Windows.Forms.Button();
             this.toolPanal = new System.Windows.Forms.FlowLayoutPanel();
-            this.word_list = new TreeViewMS.TreeViewMS();
+            this.wordList = new TreeViewMS.TreeViewMS();
             this.toolPanal.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -194,17 +194,17 @@
             // 
             // word_list
             // 
-            this.word_list.Font = new System.Drawing.Font("맑은 고딕", 12F);
-            this.word_list.Location = new System.Drawing.Point(12, 12);
-            this.word_list.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
-            this.word_list.Name = "word_list";
-            this.word_list.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("word_list.SelectedNodes")));
-            this.word_list.ShowLines = false;
-            this.word_list.ShowPlusMinus = false;
-            this.word_list.Size = new System.Drawing.Size(1078, 848);
-            this.word_list.TabIndex = 19;
-            this.word_list.KeyDown += new System.Windows.Forms.KeyEventHandler(this.word_list_KeyDown);
-            this.word_list.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.word_list_MouseDoubleClick);
+            this.wordList.Font = new System.Drawing.Font("맑은 고딕", 12F);
+            this.wordList.Location = new System.Drawing.Point(12, 12);
+            this.wordList.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
+            this.wordList.Name = "word_list";
+            this.wordList.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("word_list.SelectedNodes")));
+            this.wordList.ShowLines = false;
+            this.wordList.ShowPlusMinus = false;
+            this.wordList.Size = new System.Drawing.Size(1078, 848);
+            this.wordList.TabIndex = 19;
+            this.wordList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.word_list_KeyDown);
+            this.wordList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.word_list_MouseDoubleClick);
             // 
             // TranslateForm
             // 
@@ -212,7 +212,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1236, 873);
             this.Controls.Add(this.toolPanal);
-            this.Controls.Add(this.word_list);
+            this.Controls.Add(this.wordList);
             this.Controls.Add(this.전체줄수);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -242,7 +242,7 @@
         private System.Windows.Forms.Button 새로고침버튼;
         private System.Windows.Forms.TextBox 전체줄수;
         private System.Windows.Forms.Button 자동번역버튼;
-        private TreeViewMS.TreeViewMS word_list;
+        private TreeViewMS.TreeViewMS wordList;
         private System.Windows.Forms.FlowLayoutPanel toolPanal;
     }
 }
