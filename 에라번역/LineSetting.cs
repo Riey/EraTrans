@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     [Serializable]
     public class LineSetting
     {
-        public string Format { get; }
-        public string[] Strs { get; }
+        private string _format;
+        private string[] _strs;
 
         public LineSetting(string format, string[] strs)
         {
-            Format = format;
-            Strs = strs;
+            _format = format;
+            _strs = strs;
         }
 
         public static LineSetting Default
@@ -30,7 +30,7 @@ namespace 에라번역
         {
             StringBuilder result = new StringBuilder();
             int count = 0;
-            foreach (string temp in Format.Split('+'))
+            foreach (string temp in _format.Split('+'))
             {
                 switch (temp)
                 {
@@ -46,9 +46,9 @@ namespace 에라번역
                         }
                     case ("str"):
                         {
-                            if (count <= Strs.Length)
+                            if (count <= _strs.Length)
                             {
-                                result.Append(Strs[count++]);
+                                result.Append(_strs[count++]);
                             }
                             break;
                         }
@@ -60,7 +60,7 @@ namespace 에라번역
         public override string ToString()
         {
             //string strs = Strs.Length == 0 ? "" : Strs.Length == 1 ? Strs[0] : string.Join("|", Strs);
-            return $"{Format} {string.Join("|", Strs)}";
+            return $"{_format} {string.Join("|", _strs)}";
         }
     }
 }

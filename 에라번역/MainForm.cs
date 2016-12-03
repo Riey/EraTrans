@@ -1,4 +1,4 @@
-﻿using Fillter;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using YeongHun.Common.Config;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     public partial class MainForm : Form
     {
@@ -20,6 +20,7 @@ namespace 에라번역
         public MainForm(ConfigDic config)
         {
             setting = new Setting(config);
+            setting.Load();
             InitializeComponent();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             VersionText.Text = "Version:  ";
@@ -37,12 +38,12 @@ namespace 에라번역
 
         private void Translate(string[] paths)
         {
-            if (EncodingText.Text != setting.Config[nameof(setting.ReadEncoding)])
+            if (EncodingText.Text != setting.ReadEncoding.WebName.ToUpper())
             {
                 try
                 {
                     setting.ReadEncoding = System.Text.Encoding.GetEncoding(EncodingText.Text);
-                    setting.Config.Save(Program.ConfigFilePath);
+                    setting.Config.Save(File.Open(Program.ConfigFilePath, FileMode.Create));
                 }
                 catch
                 {
@@ -50,13 +51,13 @@ namespace 에라번역
                 }
             }
 
-            Dictionary<string, ERB_Parser> parsers = new Dictionary<string, ERB_Parser>();
+            Dictionary<string, ErbParser> parsers = new Dictionary<string, ErbParser>();
             Parallel.ForEach(paths, path =>
             {
-                ERB_Parser parser;
+                ErbParser parser;
                 try
                 {
-                    parser = new ERB_Parser(path, setting.ReadEncoding);
+                    parser = new ErbParser(path, setting.ReadEncoding);
                     if (parser.StringDictionary.Count == 0 && setting.IgnoreBlankERB)
                         return;
                     lock (parsers)
@@ -90,13 +91,14 @@ namespace 에라번역
 
         private void Main_Form_Load(object sender, EventArgs e)
         {
-            Save();
-            EncodingText.Text = setting.Config[nameof(setting.ReadEncoding)];
+            setting.Config.Save(File.Open(Program.ConfigFilePath, FileMode.Open));
+            EncodingText.Text = setting.ReadEncoding.WebName.ToUpper();
         }
 
         private void Save()
         {
-            setting.Config.Save(Program.ConfigFilePath);
+            setting.Save();
+            setting.Config.Save(File.Open(Program.ConfigFilePath, FileMode.Open));
         }
 
         private void MainForm_DragDrop(object sender, DragEventArgs e)

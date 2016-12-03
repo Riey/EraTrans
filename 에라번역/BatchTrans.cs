@@ -1,15 +1,14 @@
-using Fillter;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     public partial class BatchTrans : Form
     {
-        private Dictionary<string, ERB_Parser> parsers;
+        private Dictionary<string, ErbParser> parsers;
         private Stack<ChangeLog> logs;
-        public BatchTrans(Dictionary<string, ERB_Parser> parsers, Stack<ChangeLog> logs)
+        public BatchTrans(Dictionary<string, ErbParser> parsers, Stack<ChangeLog> logs)
         {
             this.parsers = parsers;
             this.logs = logs;

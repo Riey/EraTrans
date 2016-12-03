@@ -1,4 +1,4 @@
-﻿namespace 에라번역
+﻿namespace YeongHun.EraTrans
 {
     partial class MainForm
     {

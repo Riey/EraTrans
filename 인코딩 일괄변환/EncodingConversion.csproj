@@ -7,8 +7,8 @@
     <ProjectGuid>{EEA66764-C099-45A4-8EB4-E31B22671E5A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>인코딩_일괄변환</RootNamespace>
-    <AssemblyName>인코딩 일괄변환</AssemblyName>
+    <RootNamespace>YeongHun.EraTrans.EncodingConversion</RootNamespace>
+    <AssemblyName>EncodingConversion</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Binary\AnyCPU\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Binary\AnyCPU\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -55,7 +55,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>..\Binary\x86\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -64,7 +64,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\Binary\x86\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -120,16 +120,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF NOT EXIST "C:\에라번역\" MD "C:\에라번역\"
-IF EXIST "C:\에라번역\EraTrans\" rd /s /q "C:\에라번역\EraTrans\"
-MD "C:\에라번역\EraTrans\"
-MD "C:\에라번역\EraTrans\도구\"
-IF NOT EXIST "C:\에라번역\에라번역\" MD "C:\에라번역\에라번역\"
-IF NOT EXIST "C:\에라번역\에라번역\도구\" MD "C:\에라번역\에라번역\도구\"
-copy "$(TargetDir)인코딩 일괄변환.exe" "C:\에라번역\에라번역\도구\"
-copy "$(TargetDir)readme.txt" "C:\에라번역\에라번역\도구\"
-copy "$(TargetDir)인코딩 일괄변환.exe" "C:\에라번역\EraTrans\도구\"
-copy "$(TargetDir)readme.txt" "C:\에라번역\EraTrans\도구\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

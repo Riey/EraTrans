@@ -1,8 +1,8 @@
-﻿using Fillter;
+﻿
 using System;
 using System.Collections.Generic;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     [Serializable]
     public class ChangeLog
@@ -53,7 +53,7 @@ namespace 에라번역
             }
             return false;
         }
-        public static ChangeLog Redo(ChangeLog log, Dictionary<string, ERB_Parser> parsers)
+        public static ChangeLog Redo(ChangeLog log, Dictionary<string, ErbParser> parsers)
         {
             switch (log.PreAction)
             {
@@ -71,7 +71,7 @@ namespace 에라번역
                     }
             }
         }
-        public static ChangeLog Back(ChangeLog log, Dictionary<string, ERB_Parser> parsers)
+        public static ChangeLog Back(ChangeLog log, Dictionary<string, ErbParser> parsers)
         {
             switch (log.PreAction)
             {

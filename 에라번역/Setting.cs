@@ -1,115 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YeongHun.Common.Config;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     [Serializable]
-    public class Setting
+    public sealed class Setting:LoadableConfig
     {
-        public CheckState KoreanCB
+        [LoadableProperty("Checked", Tag = "View")]
+        public CheckState KoreanCB { get; set; }
+
+        [LoadableProperty("Checked", Tag = "View")]
+        public CheckState JapaneseCB { get; set; }
+
+        [LoadableProperty("Checked", Tag = "View")]
+        public CheckState EtcCB { get; set; }
+
+        [LoadableProperty("LINENUM+str+LINETEXT 번째줄===>", Tag = "View")]
+        public LineSetting LineSetting { get; set; }
+
+        [LoadableProperty("UTF-8", Tag = "Encoding")]
+        public Encoding ReadEncoding { get; set; }
+
+        [LoadableProperty("True", Tag = "View")]
+        public bool IgnoreBlankERB { get; set; }
+
+        [LoadableProperty("1252 * 800", Tag = "Previous State")]
+        public Size PreviousFormSize { get; set; }
+
+        [LoadableProperty("(100, 100)", Tag = "Previous State")]
+        public Point PreviousFormPosition { get; set; }
+
+        protected override void AddParsers(ConfigDic configDic)
         {
-            get
-            {
-                return Config.GetValue<CheckState>(nameof(KoreanCB));
-            }
-            set
-            {
-                Config.SetValue(nameof(KoreanCB), value);
-            }
-        }
-
-        public CheckState JapaneseCB
-        {
-            get
-            {
-                return Config.GetValue<CheckState>(nameof(JapaneseCB));
-            }
-            set
-            {
-                Config.SetValue(nameof(JapaneseCB), value);
-            }
-        }
-
-        public CheckState etcCB
-        {
-            get
-            {
-                return Config.GetValue<CheckState>(nameof(etcCB));
-            }
-            set
-            {
-                Config.SetValue(nameof(etcCB), value);
-            }
-        }
-
-        public LineSetting LineSetting
-        {
-            get
-            {
-                return Config.GetValue<LineSetting>(nameof(LineSetting));
-            }
-            private set
-            {
-                Config.SetValue(nameof(LineSetting), value);
-            }
-        }
-
-        public Encoding ReadEncoding
-        {
-            get
-            {
-                return Config.GetValue<Encoding>(nameof(ReadEncoding));
-            }
-            set
-            {
-                Config.SetValue(nameof(ReadEncoding), value);
-            }
-        }
-
-        public bool IgnoreBlankERB
-        {
-            get
-            {
-                return Config.GetValue<bool>(nameof(IgnoreBlankERB));
-            }
-            set
-            {
-                Config.SetValue(nameof(IgnoreBlankERB), value);
-            }
-        }
-        
-        public ConfigDic Config { get; }
-
-        public Setting(ConfigDic config)
-        {
-            Config = config;
-
-            config.AddParser(str =>
-            {
-                try
-                {
-                    return Encoding.GetEncoding(str);
-                }
-                catch
-                {
-                    int codePage;
-                    if (int.TryParse(str, out codePage))
-                        return Encoding.GetEncoding(codePage);
-                    else
-                        throw new InvalidCastException();
-                }
-            });
-
-            config.AddWriter<Encoding>(encoding => encoding.WebName.ToUpper());
-
-            config.AddParser(str => (CheckState)Enum.Parse(typeof(CheckState), str));
-            config.AddParser(str =>
+            configDic.AddParser(str => (CheckState)Enum.Parse(typeof(CheckState), str));
+            configDic.AddParser(str =>
             {
                 var format = Regex.Match(str, @"[^\s]+").Value;
                 var strMatch = Regex.Match(Regex.Replace(str, @"[^\s]+\s(.*)", "$1"), @"([^\|]+)");
@@ -121,25 +53,53 @@ namespace 에라번역
                 }
                 return new LineSetting(format, strs.ToArray());
             });
+            configDic.AddParser(str =>
+            {
+                try
+                {
+                    return Encoding.GetEncoding(str);
+                }
+                catch
+                {
+                    if (int.TryParse(str, out int codePage))
+                        return Encoding.GetEncoding(codePage);
+                    else
+                        throw new InvalidCastException();
+                }
+            });
 
-            if (!config.HasKey(nameof(KoreanCB)))
-                KoreanCB = CheckState.Checked;
+            configDic.AddParser(str =>
+            {
+                Match match = Regex.Match(str, @"\((?<X>\d+), (?<Y>\d+)\)");
+                if (match.Success)
+                    return new Point(int.Parse(match.Groups["X"].Value), int.Parse(match.Groups["Y"].Value));
+                throw new InvalidCastException();
+            });
 
-            if (!config.HasKey(nameof(JapaneseCB)))
-                JapaneseCB = CheckState.Checked;
-
-            if (!config.HasKey(nameof(etcCB)))
-                etcCB = CheckState.Checked;
-
-            if (!config.HasKey(nameof(LineSetting)))
-                LineSetting = LineSetting.Default;
-
-            if (!config.HasKey(nameof(ReadEncoding)))
-                ReadEncoding = Encoding.UTF8;
-
-            if (!config.HasKey(nameof(IgnoreBlankERB)))
-                IgnoreBlankERB = true;
-
+            configDic.AddParser(str =>
+            {
+                Match match = Regex.Match(str, @"(?<X>\d+) \* (?<Y>\d+)");
+                if (match.Success)
+                    return new Size(int.Parse(match.Groups["X"].Value), int.Parse(match.Groups["Y"].Value));
+                throw new InvalidCastException();
+            });
         }
+
+        protected override void AddWriters(ConfigDic configDic)
+        {
+            configDic.AddWriter<Encoding>(encoding => encoding.WebName.ToUpper());
+            configDic.AddWriter<Point>(p => $"({p.X}, {p.Y})");
+            configDic.AddWriter<Size>(s => $"{s.Width} * {s.Height}");
+        }
+
+        public ConfigDic Config { get; }
+
+        public Setting(ConfigDic config)
+        {
+            Config = config;
+        }
+
+        public void Load() => Load(Config);
+        public void Save() => Save(Config);
     }
 }

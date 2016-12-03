@@ -8,15 +8,15 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Fillter
+namespace YeongHun.EraTrans
 {
-    public class ERB_Parser
+    public class ErbParser
     {
-        public ERB_Parser(string erb_path):this(erb_path,Encoding.Unicode)
+        public ErbParser(string erb_path):this(erb_path,Encoding.Unicode)
         {
             
         }
-        public ERB_Parser(string erb_path,Encoding encoding)
+        public ErbParser(string erb_path,Encoding encoding)
         {
             this.ErbPath = erb_path;
             if (!File.Exists(erb_path))
@@ -30,10 +30,6 @@ namespace Fillter
             }
             using (FileStream ErbStream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                //string plainPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINT[^(FORM)(FORMS) ]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
-                //string formPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINTFORM[^ S]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
-                //string formsPattern = @"(?<LeftBlank>\s*)(?<FunctionCode>PRINTFORMS[^ ]*)( (?<Text>[^;]+))?(?<RightComment>;.+)?";
-
                 StreamReader reader = encoding != null ? new StreamReader(ErbStream, encoding) : new StreamReader(ErbStream, true);
                 {
                     ErbEncoding = reader.CurrentEncoding;
@@ -146,25 +142,48 @@ namespace Fillter
         {
             return printLineRegex.Match(rawLine);
         }
-        
-        public void Save()
+
+        public enum OutputType
+        {
+            Working,Release
+        }
+        public void Save(OutputType type)
         {
             using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
                 {
-                    foreach(var original in OriginalTexts)
+                    switch (type)
                     {
-                        int lineNo = original.Key;
-                        if (StringDictionary.ContainsKey(lineNo))
-                        {
-                            writer.WriteLine(";OriginalString : " + StringDictionary[lineNo].OriginalString);
-                            writer.WriteLine(NonStringDictionary[lineNo].Item1 + StringDictionary[lineNo].Str + NonStringDictionary[lineNo].Item2);
-                        }
-                        else
-                        {
-                            writer.WriteLine(OriginalTexts[lineNo]);
-                        }
+                        case OutputType.Working:
+                            foreach (var original in OriginalTexts)
+                            {
+                                int lineNo = original.Key;
+                                if (StringDictionary.ContainsKey(lineNo))
+                                {
+                                    writer.WriteLine(";OriginalString : " + StringDictionary[lineNo].OriginalString);
+                                    writer.WriteLine(NonStringDictionary[lineNo].Item1 + StringDictionary[lineNo].Str + NonStringDictionary[lineNo].Item2);
+                                }
+                                else
+                                {
+                                    writer.WriteLine(OriginalTexts[lineNo]);
+                                }
+                            }
+                            break;
+                        case OutputType.Release:
+                            foreach (var original in OriginalTexts)
+                            {
+                                int lineNo = original.Key;
+                                if (StringDictionary.ContainsKey(lineNo))
+                                {
+                                    writer.WriteLine(NonStringDictionary[lineNo].Item1 + StringDictionary[lineNo].Str + NonStringDictionary[lineNo].Item2);
+                                }
+                                else
+                                {
+                                    writer.WriteLine(OriginalTexts[lineNo]);
+                                }
+                            }
+                            break;
                     }
                     writer.Flush();
                 }

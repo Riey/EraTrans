@@ -1,11 +1,10 @@
-﻿using Fillter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     static class AutoTransFillter
     {

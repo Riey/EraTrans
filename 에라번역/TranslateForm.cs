@@ -1,5 +1,4 @@
 ﻿using YeongHun.EZTrans;
-using Fillter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     public partial class TranslateForm : Form
     {
@@ -18,7 +17,7 @@ namespace 에라번역
         private const string LIST_TAG = "LIST";
         private const string PRINTDATA_TAG = "PDAT";
         #endregion
-        public TranslateForm(Dictionary<string,ERB_Parser>parsers,Setting setting, string version)
+        public TranslateForm(Dictionary<string,ErbParser>parsers,Setting setting, string version)
         {
             this.parsers = parsers;
             this.version = version;
@@ -28,12 +27,12 @@ namespace 에라번역
 
         private void Translate_Form_Load(object sender, EventArgs e)
         {
-            DesktopLocation = Properties.Settings.Default.PreviousTranslateFormLocation;
-            Size = Properties.Settings.Default.PreviousTranslateFormSize;
+            DesktopLocation = setting.PreviousFormPosition;
+            Size = setting.PreviousFormSize;
 
             korean_cb.CheckState = setting.KoreanCB;
             japanese_cb.CheckState = setting.JapaneseCB;
-            etc_cb.CheckState = setting.etcCB;
+            etc_cb.CheckState = setting.EtcCB;
             currentLineSetting = setting.LineSetting;
             logWatcher = new Thread(CheckLog);
             logWatcher.Start();
@@ -101,6 +100,7 @@ namespace 에라번역
                 return true;
             return true;
         }
+
         private void word_update()
         {
             TreeNode Top = wordList.TopNode;
@@ -207,10 +207,11 @@ namespace 에라번역
 
         private void displayLanguageChagned(object sender, EventArgs e)
         {
-            if (Init) return;
+            if (Init)
+                return;
             setting.KoreanCB = korean_cb.CheckState;
             setting.JapaneseCB = japanese_cb.CheckState;
-            setting.etcCB = etc_cb.CheckState;
+            setting.EtcCB = etc_cb.CheckState;
             word_update();
         }
 
@@ -223,7 +224,7 @@ namespace 에라번역
         {
             foreach (var parser in parsers)
             {
-                parser.Value.Save();
+                parser.Value.Save(ErbParser.OutputType.Working);
             }
             MessageBox.Show("저장완료!");
             changed = false;
@@ -239,10 +240,8 @@ namespace 에라번역
                 }
             }
             logWatcher.Abort();
-            GC.Collect();
-            Properties.Settings.Default.PreviousTranslateFormLocation = DesktopLocation;
-            Properties.Settings.Default.PreviousTranslateFormSize = Size;
-            Properties.Settings.Default.Save();
+            setting.PreviousFormSize = Size;
+            setting.PreviousFormPosition = DesktopLocation;
         }
         private void 일괄번역버튼_Click(object sender, EventArgs e)
         {
@@ -362,7 +361,7 @@ namespace 에라번역
         #region Field
         public delegate void CheckLogHandler(Button btn, bool enable);
         private bool changed = false;
-        private Dictionary<string,ERB_Parser> parsers;
+        private Dictionary<string,ErbParser> parsers;
         private string version;
         private LineSetting currentLineSetting;
         private Stack<ChangeLog> _logs=new Stack<ChangeLog>();

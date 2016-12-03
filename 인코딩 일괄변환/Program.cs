@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-namespace 인코딩_일괄변환
+namespace YeongHun.EraTrans.EncodingConversion
 {
     class Program
     {

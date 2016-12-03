@@ -1,10 +1,8 @@
-﻿using Fillter;
-using System;
-using System.Linq;
+﻿using System;
 using System.Windows.Forms;
 using YeongHun.EZTrans;
 
-namespace 에라번역
+namespace YeongHun.EraTrans
 {
     public partial class ChangeForm : Form
     {
