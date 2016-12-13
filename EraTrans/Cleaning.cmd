@@ -1,4 +1,5 @@
-﻿if not exist DLL\ md DLL\
+﻿
+if not exist DLL\ md DLL\
 move *.dll DLL\
 if not exist Tool\ md Tool\
 del *.pdb

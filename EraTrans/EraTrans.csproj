@@ -187,7 +187,7 @@
       <DependentUpon>TranslateForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
-    <None Include="Cleaning.bat">
+    <None Include="Cleaning.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
