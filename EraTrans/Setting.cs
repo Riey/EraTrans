@@ -14,6 +14,9 @@ namespace YeongHun.EraTrans
     [Serializable]
     public sealed class Setting:LoadableConfig
     {
+        [LoadableProperty("Working", Key = "저장방식", Tag = "Output")]
+        public ErbParser.OutputType OutputType { get; set; }
+
         [LoadableProperty("Checked", Tag = "View")]
         public CheckState KoreanCB { get; set; }
 

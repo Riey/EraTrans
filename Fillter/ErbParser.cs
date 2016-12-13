@@ -38,8 +38,7 @@ namespace YeongHun.EraTrans
                     string originalText = null;
                     string temp = null;
 
-                    Action ReadNext = null;
-                    ReadNext = () =>
+                    Match ParseNextLine()
                     {
                         temp = reader.ReadLine();
                         lineNo++;
@@ -55,12 +54,12 @@ namespace YeongHun.EraTrans
                             originalText = null;
                         }
                         OriginalTexts.Add(lineNo, temp);
-                    };
+                        return ParseLine(temp);
+                    }
 
                     while (!reader.EndOfStream)
                     {
-                        ReadNext();
-                        var match = ParseLine(temp);
+                        var match = ParseNextLine();
 
                         if (match.Success)
                         {
@@ -72,8 +71,7 @@ namespace YeongHun.EraTrans
                                 bool exit = false;
                                 while (!exit)
                                 {
-                                    ReadNext();
-                                    match = ParseLine(temp);
+                                    match = ParseNextLine();
                                     if (!match.Success)
                                         continue;
                                     switch (match.Groups["FunctionCode"].Value)
@@ -145,8 +143,9 @@ namespace YeongHun.EraTrans
 
         public enum OutputType
         {
-            Working,Release
+            Working, Release
         }
+
         public void Save(OutputType type)
         {
             using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))

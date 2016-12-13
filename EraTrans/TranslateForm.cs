@@ -33,13 +33,15 @@ namespace YeongHun.EraTrans
             korean_cb.CheckState = setting.KoreanCB;
             japanese_cb.CheckState = setting.JapaneseCB;
             etc_cb.CheckState = setting.EtcCB;
+            saveOriginalCB.Checked = setting.OutputType == ErbParser.OutputType.Working;
+
+
             currentLineSetting = setting.LineSetting;
             logWatcher = new Thread(CheckLog);
             logWatcher.Start();
             word_update();
             Init = false;
             int line = GetLineCount();
-            전체줄수.Text = line.ToString() + "줄";
         }
 
         private void CheckLog()
@@ -224,7 +226,8 @@ namespace YeongHun.EraTrans
         {
             foreach (var parser in parsers)
             {
-                parser.Value.Save(ErbParser.OutputType.Working);
+                //Set Output type
+                parser.Value.Save(saveOriginalCB.Checked ? ErbParser.OutputType.Working : ErbParser.OutputType.Release);
             }
             MessageBox.Show("저장완료!");
             changed = false;
@@ -242,6 +245,7 @@ namespace YeongHun.EraTrans
             logWatcher.Abort();
             setting.PreviousFormSize = Size;
             setting.PreviousFormPosition = DesktopLocation;
+            setting.OutputType = saveOriginalCB.Checked ? ErbParser.OutputType.Working : ErbParser.OutputType.Release;
         }
         private void 일괄번역버튼_Click(object sender, EventArgs e)
         {
