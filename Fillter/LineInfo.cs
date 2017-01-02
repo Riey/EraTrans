@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace YeongHun.EraTrans
 {
-    public class LineInfo
+    public class LineInfo:INotifyPropertyChanged
     {
         private bool korean;
         private bool japanese;
         private string str;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
         public string Str
         {
@@ -22,6 +32,9 @@ namespace YeongHun.EraTrans
             {
                 str = value;
                 GetLang.Get(value, out korean, out japanese);
+                OnPropertyChanged();
+                OnPropertyChanged("Korean");
+                OnPropertyChanged("Japanese");
             }
         }
 

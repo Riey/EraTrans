@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace YeongHun.EraTrans
 {
     public class ErbParser
     {
-        public ErbParser(string erb_path):this(erb_path,Encoding.Unicode)
+        public ErbParser(string erbPath) : this(erbPath, Encoding.Unicode)
         {
-            
+
         }
-        public ErbParser(string erb_path,Encoding encoding)
+
+        public ErbParser(string erbPath, Encoding encoding) : this(erbPath, encoding, true) { }
+
+        public ErbParser(string erbPath, Encoding encoding, bool backup)
         {
-            this.ErbPath = erb_path;
-            if (!File.Exists(erb_path))
+            this.ErbPath = erbPath;
+            if (!File.Exists(erbPath))
             {
                 throw new FileNotFoundException();
             }
-            FileInfo info = new FileInfo(erb_path);
-            if (!File.Exists(Application.StartupPath + "\\Backup\\" + info.Name))
+            var info = new FileInfo(erbPath);
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "Backup\\" + info.Name))
             {
-                info.CopyTo(Application.StartupPath + "\\Backup\\" + info.Name);
+                info.CopyTo(AppDomain.CurrentDomain.BaseDirectory + "Backup\\" + info.Name);
             }
             using (FileStream ErbStream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
@@ -119,7 +118,7 @@ namespace YeongHun.EraTrans
                             else
                             {//일반 PRINT문
                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
-                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS"),originalText));
+                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS"), originalText));
                             }
 
                         }
@@ -148,9 +147,9 @@ namespace YeongHun.EraTrans
 
         public void Save(OutputType type)
         {
-            using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
+            using (var ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
             {
-                using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
+                using (var writer = new StreamWriter(ErbStream, ErbEncoding))
                 {
                     switch (type)
                     {
@@ -191,7 +190,7 @@ namespace YeongHun.EraTrans
         private string erbPath;
         private Encoding erbEncoding;
 
-        private Dictionary<int,string> OriginalTexts { get; set; } = new Dictionary<int, string>();
+        private Dictionary<int, string> OriginalTexts { get; set; } = new Dictionary<int, string>();
 
         public Dictionary<int, LineInfo> StringDictionary { get; private set; } = new Dictionary<int, LineInfo>();
 

@@ -1,0 +1,46 @@
+﻿<Window x:Class="YeongHun.EraTrans.WPF.WorkingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YeongHun.EraTrans.WPF"
+        mc:Ignorable="d"
+        Title="WorkingWindow" Height="440.139" Width="686.107"
+        SizeChanged="WorkingWindowSizeChanged">
+    <Window.Resources>
+        <local:ExtenedToVisibilityConverter x:Key="ExtenedToVisibilityConverter"/>
+        <local:ListViewWidthConverter x:Key="ListViewWidthConverter"/>
+        <local:ListViewHeightConverter x:Key="ListViewHeightConverter"/>
+    </Window.Resources>
+    <Grid>
+        <ListView SelectionMode="Extended"
+                  ItemsSource="{Binding ParentLines}"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Width="{Binding Width, Mode=OneWay, Converter={StaticResource ListViewWidthConverter}}"
+                  Height="{Binding Height, Mode=OneWay}"
+                  BorderThickness="0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding ErbName, Mode=OneTime}" 
+                                   MouseLeftButtonDown="ErbTextBlockLeftClicked"/>
+                        <ListView ItemsSource="{Binding Lines, Mode=OneWay}"
+                                  Visibility="{Binding IsExtended, Converter={StaticResource ExtenedToVisibilityConverter}, Mode=OneWay}"
+                                  BorderThickness="0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding HeaderString, Mode=OneTime}"/>
+                                        <TextBox Text="{Binding Text, Mode=TwoWay}"
+                                 BorderThickness="0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>
