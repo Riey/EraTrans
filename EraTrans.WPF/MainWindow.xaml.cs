@@ -25,7 +25,7 @@ namespace YeongHun.EraTrans.WPF
     {
         private ConfigDic _configDic;
         private Config _config;
-        
+
 
         public string EncodingText
         {
@@ -34,6 +34,7 @@ namespace YeongHun.EraTrans.WPF
                 return _config.ReadEncoding.WebName.ToUpper();
             }
         }
+
         public bool FileBackup
         {
             get => _config.FileBackup;
@@ -62,6 +63,45 @@ namespace YeongHun.EraTrans.WPF
             Title = $"에라번역 version {version.Major}.{version.Minor}.{version.Revision}.{version.Build}";
 
             DataContext = this;
+        }
+
+        private void InitializeEZTransPath()
+        {
+            //Don't use EzTransXP
+            if (!_config.EzTransEnable)
+                return;
+
+            int result = EZTrans.TranslateXP.Initialize(_config.EzTransXP_Path);
+
+            //Fail Initialize
+            if (result != 0)
+            {
+                var dialog = new System.Windows.Forms.FolderBrowserDialog()
+                {
+                    ShowNewFolderButton = true,
+                    Description = "이지트랜스의 경로를 설정해주세요"
+                };
+
+                dialog.ShowDialog();
+
+                result = EZTrans.TranslateXP.Initialize(dialog.SelectedPath);
+                if (result != 0)
+                {
+                    System.Diagnostics.Trace.TraceWarning("이지트랜스 초기화에 실패했습니다 에러코드 : {0}", result);
+                    return;
+                }
+                _config.EzTransXP_Path = dialog.SelectedPath;
+            }
+
+
+            if (_config.EZTransCaching)
+                EZTrans.TranslateXP.LoadCache(AppDomain.CurrentDomain.BaseDirectory + Config.CacheFileName);
+
+            if (_config.UseUserDictionary)
+                EZTrans.TranslateXP.LoadDictionary(AppDomain.CurrentDomain.BaseDirectory + Config.UserDictionaryName);
+
+            _config.Save();
+            _configDic.Save(File.OpenWrite(AppDomain.CurrentDomain.BaseDirectory + "Config.txt"));
         }
 
         private void FileTranslateButtonClick(object sender, RoutedEventArgs e)
@@ -110,16 +150,23 @@ namespace YeongHun.EraTrans.WPF
             }
 
             var workingWindow = new WorkingWindow(parsers, _config);
-
-            this.Visibility = Visibility.Collapsed;
-            this.IsEnabled = false;
-            WindowState = WindowState.Minimized;
-
             workingWindow.ShowDialog();
+        }
 
-            this.Visibility = Visibility.Visible;
-            this.IsEnabled = true;
-            WindowState = WindowState.Maximized;
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            InitializeEZTransPath();
+        }
+
+        private void WindowClosed(object sender, EventArgs e)
+        {
+            _configDic.Save(File.OpenWrite(AppDomain.CurrentDomain.BaseDirectory + "Config.txt"));
+
+            if (!_config.EzTransEnable)
+                return;
+            EZTrans.TranslateXP.Terminate();
+            if (_config.UseUserDictionary)
+                EZTrans.TranslateXP.SaveDictionary(AppDomain.CurrentDomain.BaseDirectory + Config.UserDictionaryName);
         }
     }
 }

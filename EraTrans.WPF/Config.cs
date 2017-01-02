@@ -15,6 +15,11 @@ namespace YeongHun.EraTrans.WPF
     }
     public class Config : LoadableConfig
     {
+        public static readonly string CacheFileName = "Cache.dat";
+        public static readonly string UserDictionaryName = "UserDictionary.xml";
+
+
+
         [LoadableProperty("True")]
         public bool FileBackup { get; set; }
 
@@ -30,8 +35,20 @@ namespace YeongHun.EraTrans.WPF
         [LoadableProperty("UTF-8", Tag = "Encoding")]
         public Encoding ReadEncoding { get; set; }
 
-        [LoadableProperty("Enable", Key = "Status", Tag = "ezTransXP")]
-        public Status EzTransXP_Status { get; set; }
+        [LoadableField("Enable", Key = "Status", Tag = "ezTransXP")]
+        private Status _ezTransStatus;
+
+        public bool EzTransEnable => _ezTransStatus == Status.Enable;
+
+        [LoadableField("Disable", Key = "Caching", Tag = "ezTransXP")]
+        private Status _ezTransCache;
+
+        public bool EZTransCaching => _ezTransCache == Status.Enable;
+
+        [LoadableField("Disable", Key = "UseUserDictionary", Tag = "ezTransXP")]
+        private Status _useUserDictionary;
+
+        public bool UseUserDictionary => _useUserDictionary == Status.Enable;
 
         [LoadableProperty("", Key = "FolderPath", Tag = "ezTransXP")]
         public string EzTransXP_Path { get; set; }

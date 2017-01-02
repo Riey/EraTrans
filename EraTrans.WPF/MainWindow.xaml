@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YeongHun.EraTrans.WPF"
         mc:Ignorable="d"
-        Title="에라번역" Height="247.5" Width="431.667">
+        Title="에라번역" Height="247.5" Width="431.667"
+        Loaded="WindowLoaded"
+        Closed="WindowClosed">
     <Grid>
         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Height="61" Margin="10,10,0,0" VerticalAlignment="Top" Width="404">
             <Button Content="파일번역" Margin="10" Width="100" Click="FileTranslateButtonClick"/>

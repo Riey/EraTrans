@@ -53,6 +53,21 @@ namespace YeongHun.EraTrans.WPF
             _viewModel.Width = e.NewSize.Width;
             _viewModel.Height = e.NewSize.Height;
         }
+
+        private void SaveButtonPressed(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Save()
+        {
+
+        }
+
+        private void WindowPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 
     public class ListViewWidthConverter : IValueConverter
@@ -60,7 +75,7 @@ namespace YeongHun.EraTrans.WPF
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is double d)
-                return d - 100;
+                return d - 150;
             return 800;
         }
 
