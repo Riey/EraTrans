@@ -80,10 +80,10 @@ namespace YeongHun.EraTrans.WPF
         public double PreviousHeight { get; set; }
 
         [LoadableProperty("500", Key = "Left", Tag = "Previous Status")]
-        public int PreviousLeft { get; set; }
+        public double PreviousLeft { get; set; }
 
         [LoadableProperty("500", Key = "Top", Tag = "Previous Status")]
-        public int PreviousTop { get; set; }
+        public double PreviousTop { get; set; }
 
         [LoadableProperty("", Key = "SelectedFolderPath", Tag = "Previous Status")]
         public string PreviousSelectedFolderPath { get; set; }

@@ -14,30 +14,40 @@
         <local:ListViewWidthConverter x:Key="ListViewWidthConverter"/>
         <local:ListViewHeightConverter x:Key="ListViewHeightConverter"/>
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="rootGrid" Width="{Binding Width, Mode=OneWay}" Height="{Binding Height, Mode=OneWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
-        <ItemsControl
+        <ListView
                   Grid.Column="0"
                   ItemsSource="{Binding ParentLines}"
-                  HorizontalAlignment="Stretch"
+                  HorizontalAlignment="Left"
                   VerticalAlignment="Top"
-                  HorizontalContentAlignment="Stretch"
+                  SelectionMode="Single"
+                  HorizontalContentAlignment="Left"
                   Width="{Binding Width, Converter={StaticResource ListViewWidthConverter}}"
                   Height="{Binding Height, Converter={StaticResource ListViewHeightConverter}}"
-                  BorderThickness="0" x:Name="ErbParentLineControl">
+                  BorderThickness="0" x:Name="erbParentLineControl"
+                  ScrollViewer.CanContentScroll="False"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  ScrollViewer.HorizontalScrollBarVisibility="Visible">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
                         <TextBlock Text="{Binding ErbName, Mode=OneTime}" 
-                                   MouseLeftButtonDown="ErbTextBlockLeftClicked"/>
+                                   MouseLeftButtonDown="ErbTextBlockLeftClicked"
+                                   Grid.Row="0"/>
                         <ListView ItemsSource="{Binding Lines, Mode=OneWay}"
                                   HorizontalContentAlignment="Left"
                                   Visibility="{Binding IsExtended, Converter={StaticResource ExtenedToVisibilityConverter}, Mode=OneWay}"
                                   BorderThickness="0" SelectionMode="Extended"
-                                  Margin="0,0,50,0" SelectionChanged="ListView_SelectionChanged">
+                                  Margin="0,0,50,0" SelectionChanged="ListView_SelectionChanged"
+                                  Grid.Row="1">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -48,10 +58,10 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                    </StackPanel>
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        </ListView>
         <StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Button Content="자동번역" Margin="20,10,20,10" Height="40" Click="AutoTranslateButtonPressed"/>
             <Button Content="일괄번역" Margin="20,10,20,10" Height="40" Click="BatchTranslateButtonPressed"/>

@@ -144,7 +144,7 @@ namespace YeongHun.EraTrans.WPF
                 Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Backup\\");
             try
             {
-                var e = Encoding.GetEncoding(EncodingTextBox.Text);
+                var e = Encoding.GetEncoding(encodingTextBox.Text);
                 _config.ReadEncoding = e;
             }
             catch (Exception e)

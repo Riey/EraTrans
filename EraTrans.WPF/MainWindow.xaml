@@ -26,7 +26,7 @@
                     Text="사용할 인코딩"
                      />
                 <TextBox 
-                     x:Name="EncodingTextBox"
+                     x:Name="encodingTextBox"
                      Margin="0,10,0,0"
                      TextWrapping="Wrap"
                      Text="{Binding EncodingText, Mode=OneTime}"

@@ -47,6 +47,7 @@ namespace YeongHun.EraTrans.WPF
             Top = _config.PreviousTop;
             Width = _config.PreviousWidth;
             Height = _config.PreviousHeight;
+            erbParentLineControl.CacheMode = new BitmapCache();
         }
 
         private void ErbTextBlockLeftClicked(object sender, MouseButtonEventArgs e)
@@ -169,7 +170,7 @@ namespace YeongHun.EraTrans.WPF
         }
     }
 
-    public class WorkingWindowViewModel : INotifyPropertyChanged
+    public class WorkingWindowViewModel : DependencyObject, INotifyPropertyChanged
     {
         private Config _config;
 
@@ -186,18 +187,32 @@ namespace YeongHun.EraTrans.WPF
         public double Width
         {
             get => _config.PreviousWidth;
-            set => _config.PreviousWidth = value;
+            set { _config.PreviousWidth = value; OnPropertyChanged(); }
         }
         public double Height
         {
             get => _config.PreviousHeight;
-            set => _config.PreviousHeight = value;
+            set { _config.PreviousHeight = value; OnPropertyChanged(); }
         }
+
+
 
         public bool SaveOriginalString
         {
             get => _config.SaveOriginalString;
-            set => _config.SaveOriginalString = value;
+            set { _config.SaveOriginalString = value; OnPropertyChanged(); }
+        }
+
+        public double Left
+        {
+            get => _config.PreviousLeft;
+            set { _config.PreviousLeft = value; OnPropertyChanged(); }
+        }
+
+        public double Top
+        {
+            get => _config.PreviousTop;
+            set { _config.PreviousTop = value; OnPropertyChanged(); }
         }
 
         public WorkingWindowViewModel(Config config)
