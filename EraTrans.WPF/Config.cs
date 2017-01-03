@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YeongHun.Common.Config;
 
+#pragma warning disable CS0649
+
 namespace YeongHun.EraTrans.WPF
 {
     public enum Status

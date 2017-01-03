@@ -53,7 +53,7 @@ namespace YeongHun.EraTrans
 
             public override string ToString()
             {
-                StringBuilder sb = new StringBuilder(SeperatedStrings[0]);
+                var sb = new StringBuilder(SeperatedStrings[0]);
                 for (int i = 1; i < SeperatedStrings.Length; i++)
                 {
                     sb.Append(seperators[i - 1]);
