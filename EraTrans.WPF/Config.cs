@@ -23,6 +23,17 @@ namespace YeongHun.EraTrans.WPF
         [LoadableProperty("True")]
         public bool FileBackup { get; set; }
 
+        [LoadableProperty("True")]
+        public bool SaveOriginalString { get; set; }
+
+        public ErbParser.OutputType OutputType
+        {
+            get => SaveOriginalString ? ErbParser.OutputType.Working : ErbParser.OutputType.Release;
+            set => SaveOriginalString = value == ErbParser.OutputType.Working;
+        }
+
+        #region View Config
+
         [LoadableProperty("True", Tag = "View")]
         public bool ShowKorean { get; set; }
 
@@ -32,8 +43,12 @@ namespace YeongHun.EraTrans.WPF
         [LoadableProperty("LINENUM+str 번째줄===>", Tag = "View")]
         public LineSetting LineSetting { get; set; }
 
+        #endregion
+
         [LoadableProperty("UTF-8", Tag = "Encoding")]
         public Encoding ReadEncoding { get; set; }
+
+#region ezTransXP Config
 
         [LoadableField("Enable", Key = "Status", Tag = "ezTransXP")]
         private Status _ezTransStatus;
@@ -52,6 +67,8 @@ namespace YeongHun.EraTrans.WPF
 
         [LoadableProperty("", Key = "FolderPath", Tag = "ezTransXP")]
         public string EzTransXP_Path { get; set; }
+
+#endregion
 
         protected override void AddParsers(ConfigDic configDic)
         {

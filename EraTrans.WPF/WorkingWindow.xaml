@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="WorkingWindow" Height="440.139" Width="686.107"
         SizeChanged="WorkingWindowSizeChanged"
-        PreviewKeyDown="WindowPreviewKeyDown">
+        KeyDown="WindowKeyDown" Closing="Window_Closing">
     <Window.Resources>
         <local:ExtenedToVisibilityConverter x:Key="ExtenedToVisibilityConverter"/>
         <local:ListViewWidthConverter x:Key="ListViewWidthConverter"/>
@@ -18,16 +18,16 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
-        <ListView
-                  SelectionMode="Extended"
+        <ItemsControl
+                  Grid.Column="0"
                   ItemsSource="{Binding ParentLines}"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Top"
                   HorizontalContentAlignment="Stretch"
                   Width="{Binding Width, Converter={StaticResource ListViewWidthConverter}}"
                   Height="{Binding Height, Converter={StaticResource ListViewHeightConverter}}"
-                  BorderThickness="0">
-            <ListView.ItemTemplate>
+                  BorderThickness="0" x:Name="ErbParentLineControl">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="{Binding ErbName, Mode=OneTime}" 
@@ -35,27 +35,28 @@
                         <ListView ItemsSource="{Binding Lines, Mode=OneWay}"
                                   HorizontalContentAlignment="Left"
                                   Visibility="{Binding IsExtended, Converter={StaticResource ExtenedToVisibilityConverter}, Mode=OneWay}"
-                                  BorderThickness="0"
-                                  Margin="0,0,50,0">
+                                  BorderThickness="0" SelectionMode="Extended"
+                                  Margin="0,0,50,0" SelectionChanged="ListView_SelectionChanged">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding HeaderString, Mode=OneTime}"/>
                                         <TextBox Text="{Binding Text, Mode=TwoWay}"
-                                 BorderThickness="0"/>
+                                                 BorderThickness="0" TextChanged="WorkingTextBox_TextChanged"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
                     </StackPanel>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Content="자동번역" Margin="20,10,20,10" Height="40"/>
-            <Button Content="일괄번역" Margin="20,10,20,10" Height="40"/>
-            <Button Content="저장하기" Margin="20,10,20,10" Height="40"/>
-            <Button Content="종료하기" Margin="20,10,20,10" Height="40"/>
+            <Button Content="자동번역" Margin="20,10,20,10" Height="40" Click="AutoTranslateButtonPressed"/>
+            <Button Content="일괄번역" Margin="20,10,20,10" Height="40" Click="BatchTranslateButtonPressed"/>
+            <Button Content="저장하기" Margin="20,10,20,10" Height="40" Click="SaveButtonPressed"/>
+            <Button Content="종료하기" Margin="20,10,20,10" Height="40" Click="ExitButtonPressed"/>
+            <CheckBox Content="원본을 저장" Margin="20,80,20,10" IsChecked="{Binding SaveOriginalString, Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
 </Window>

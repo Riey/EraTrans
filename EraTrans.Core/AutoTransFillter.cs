@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YeongHun.EraTrans
 {
-    static class AutoTransFillter
+    public static class AutoTransFillter
     {
         private class SeperatedString
         {
@@ -75,7 +75,7 @@ namespace YeongHun.EraTrans
             }
             else
             {
-                return YeongHun.EZTrans.TranslateXP.Translate(info.Str);
+                return EZTrans.TranslateXP.Translate(info.Str);
             }
         }
 
