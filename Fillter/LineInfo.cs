@@ -5,14 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace YeongHun.EraTrans
 {
-    public class LineInfo:INotifyPropertyChanged
+    public class LineInfo: DependencyObject, INotifyPropertyChanged
     {
         private bool korean;
         private bool japanese;
-        private string str;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -24,19 +24,19 @@ namespace YeongHun.EraTrans
 
         public string Str
         {
-            get
-            {
-                return str;
-            }
+            get => (string)GetValue(StrProperty);
             set
             {
-                str = value;
+                SetValue(StrProperty, value);
                 GetLang.Get(value, out korean, out japanese);
                 OnPropertyChanged();
                 OnPropertyChanged("Korean");
                 OnPropertyChanged("Japanese");
             }
         }
+
+        public static readonly DependencyProperty StrProperty =
+            DependencyProperty.Register("Str", typeof(string), typeof(LineInfo));
 
         public bool IsForm { get; }
         public bool IsFormS { get; }
@@ -72,7 +72,7 @@ namespace YeongHun.EraTrans
 
         public override string ToString()
         {
-            return $"{str}|IsForm = {IsForm}|IsFormS = {IsFormS}|IsList = {IsList}|PrintDataLine = {PrintDataLine}";
+            return $"{Str}|IsForm = {IsForm}|IsFormS = {IsFormS}|IsList = {IsList}|PrintDataLine = {PrintDataLine}";
         }
     }
 }

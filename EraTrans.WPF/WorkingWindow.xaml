@@ -42,7 +42,7 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding HeaderString, Mode=OneTime}"/>
-                                        <TextBox Text="{Binding Text, Mode=TwoWay}"
+                                        <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  BorderThickness="0" TextChanged="WorkingTextBox_TextChanged"/>
                                     </StackPanel>
                                 </DataTemplate>
