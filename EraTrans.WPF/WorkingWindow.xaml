@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YeongHun.EraTrans.WPF"
         mc:Ignorable="d"
-        Title="WorkingWindow" Height="440.139" Width="686.107"
-        SizeChanged="WorkingWindowSizeChanged"
+        Title="WorkingWindow"
+        Height="{Binding Height, Mode=OneWayToSource}" Width="{Binding Width, Mode=OneWayToSource}"
+        Left="{Binding Left, Mode=OneWayToSource}" Top="{Binding Top, Mode=OneWayToSource}"
         KeyDown="WindowKeyDown" Closing="Window_Closing">
     <Window.Resources>
         <local:ExtenedToVisibilityConverter x:Key="ExtenedToVisibilityConverter"/>

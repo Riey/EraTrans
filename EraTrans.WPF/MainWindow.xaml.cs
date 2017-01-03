@@ -106,17 +106,36 @@ namespace YeongHun.EraTrans.WPF
 
         private void FileTranslateButtonClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-
-            dialog.Filter = "ERB파일(*.ERB)|*.ERB|모든파일(*.*)|*.*";
-            dialog.Multiselect = false;
-            if (dialog.ShowDialog() ?? false)
+            var dialog = new System.Windows.Forms.OpenFileDialog()
+            {
+                Filter = "ERB파일(*.ERB)|*.ERB|모든파일(*.*)|*.*",
+                Multiselect = false,
+                RestoreDirectory = false,
+                CheckFileExists = true,
+                CheckPathExists = true
+            };
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _config.PreviousSelectedFolderPath = System.IO.Path.GetDirectoryName(dialog.FileName);
                 StartTranslate(new[] { dialog.FileName });
+            }
         }
 
         private void FolderTranslateButtonClick(object sender, RoutedEventArgs e)
         {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog
+                ()
+            {
+                Description = "번역할 폴더를 선택해주세요",
+                ShowNewFolderButton = true,
+                SelectedPath = AppDomain.CurrentDomain.BaseDirectory
+            };
 
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _config.PreviousSelectedFolderPath = dialog.SelectedPath;
+                StartTranslate(Directory.GetFiles(dialog.SelectedPath, "*.ERB", SearchOption.AllDirectories));
+            }
         }
 
         private void StartTranslate(string[] filePaths)
@@ -125,7 +144,7 @@ namespace YeongHun.EraTrans.WPF
                 Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Backup\\");
             try
             {
-                var e = Encoding.GetEncoding(_encodingTextBox.Text);
+                var e = Encoding.GetEncoding(EncodingTextBox.Text);
                 _config.ReadEncoding = e;
             }
             catch (Exception e)
@@ -150,7 +169,12 @@ namespace YeongHun.EraTrans.WPF
             }
 
             var workingWindow = new WorkingWindow(parsers, _config);
+
+            Visibility = Visibility.Collapsed;
+            IsEnabled = false;
             workingWindow.ShowDialog();
+            IsEnabled = true;
+            Visibility = Visibility.Visible;
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
@@ -160,6 +184,7 @@ namespace YeongHun.EraTrans.WPF
 
         private void WindowClosed(object sender, EventArgs e)
         {
+            _config.Save();
             _configDic.Save(File.OpenWrite(AppDomain.CurrentDomain.BaseDirectory + "Config.txt"));
 
             if (!_config.EzTransEnable)

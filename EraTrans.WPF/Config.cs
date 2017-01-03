@@ -50,7 +50,7 @@ namespace YeongHun.EraTrans.WPF
         [LoadableProperty("UTF-8", Tag = "Encoding")]
         public Encoding ReadEncoding { get; set; }
 
-#region ezTransXP Config
+        #region ezTransXP Config
 
         [LoadableField("Enable", Key = "Status", Tag = "ezTransXP")]
         private Status _ezTransStatus;
@@ -70,7 +70,25 @@ namespace YeongHun.EraTrans.WPF
         [LoadableProperty("", Key = "FolderPath", Tag = "ezTransXP")]
         public string EzTransXP_Path { get; set; }
 
-#endregion
+        #endregion
+
+        #region Previous Status Config
+        [LoadableProperty("700", Key = "Width", Tag = "Previous Status")]
+        public double PreviousWidth { get; set; }
+
+        [LoadableProperty("500", Key = "Height", Tag = "Previous Status")]
+        public double PreviousHeight { get; set; }
+
+        [LoadableProperty("500", Key = "Left", Tag = "Previous Status")]
+        public int PreviousLeft { get; set; }
+
+        [LoadableProperty("500", Key = "Top", Tag = "Previous Status")]
+        public int PreviousTop { get; set; }
+
+        [LoadableProperty("", Key = "SelectedFolderPath", Tag = "Previous Status")]
+        public string PreviousSelectedFolderPath { get; set; }
+
+        #endregion
 
         protected override void AddParsers(ConfigDic configDic)
         {

@@ -42,6 +42,11 @@ namespace YeongHun.EraTrans.WPF
             InitializeComponent();
 
             DataContext = _viewModel;
+
+            Left = _config.PreviousLeft;
+            Top = _config.PreviousTop;
+            Width = _config.PreviousWidth;
+            Height = _config.PreviousHeight;
         }
 
         private void ErbTextBlockLeftClicked(object sender, MouseButtonEventArgs e)
@@ -51,12 +56,6 @@ namespace YeongHun.EraTrans.WPF
                 var parentLine = ((TextBlock)sender).DataContext as ErbParentLine;
                 parentLine.IsExtended = !parentLine.IsExtended;
             }
-        }
-
-        private void WorkingWindowSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _viewModel.Width = e.NewSize.Width;
-            _viewModel.Height = e.NewSize.Height;
         }
 
         private void AutoTranslateButtonPressed(object sender, RoutedEventArgs e)
@@ -183,25 +182,16 @@ namespace YeongHun.EraTrans.WPF
         }
 
         public ObservableCollection<ErbParentLine> ParentLines { get; set; }
-
-        private double _width, _height;
+        
         public double Width
         {
-            get => _width;
-            set
-            {
-                _width = value;
-                OnPropertyChanged();
-            }
+            get => _config.PreviousWidth;
+            set => _config.PreviousWidth = value;
         }
         public double Height
         {
-            get => _height;
-            set
-            {
-                _height = value;
-                OnPropertyChanged();
-            }
+            get => _config.PreviousHeight;
+            set => _config.PreviousHeight = value;
         }
 
         public bool SaveOriginalString
