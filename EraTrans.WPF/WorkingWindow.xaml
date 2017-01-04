@@ -34,20 +34,14 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Visible">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
+                    <StackPanel>
                         <TextBlock Text="{Binding ErbName, Mode=OneTime}" 
-                                   MouseLeftButtonDown="ErbTextBlockLeftClicked"
-                                   Grid.Row="0"/>
+                                   MouseLeftButtonDown="ErbTextBlockLeftClicked"/>
                         <ListView ItemsSource="{Binding Lines, Mode=OneWay}"
                                   HorizontalContentAlignment="Left"
                                   Visibility="{Binding IsExtended, Converter={StaticResource ExtenedToVisibilityConverter}, Mode=OneWay}"
                                   BorderThickness="0" SelectionMode="Extended"
-                                  Margin="0,0,50,0" SelectionChanged="ListView_SelectionChanged"
-                                  Grid.Row="1">
+                                  Margin="0,0,50,0" SelectionChanged="ListView_SelectionChanged">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -58,7 +52,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                    </Grid>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListView>
