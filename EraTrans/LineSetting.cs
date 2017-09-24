@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace YeongHun.EraTrans
 {
@@ -28,7 +25,7 @@ namespace YeongHun.EraTrans
 
         public string GetLine(long linenum, string linetext)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             int count = 0;
             foreach (string temp in _format.Split('+'))
             {

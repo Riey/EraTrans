@@ -27,8 +27,8 @@ namespace YeongHun.EraTrans.EncodingConversion
                 if (int.TryParse(Console.ReadLine(), out target_code))
                     break;
             }
-            Encoding original = Encoding.GetEncoding(original_code);
-            Encoding target = Encoding.GetEncoding(target_code);
+            var original = Encoding.GetEncoding(original_code);
+            var target = Encoding.GetEncoding(target_code);
             bool exit = false;
             while (!exit)
             {
@@ -60,13 +60,13 @@ namespace YeongHun.EraTrans.EncodingConversion
                       string text = "";
                       using(FileStream fs = file.Open(FileMode.Open, FileAccess.Read))
                       {
-                          StreamReader reader = new StreamReader(fs, original);
+                          var reader = new StreamReader(fs, original);
                           text = reader.ReadToEnd();
                       }
                       file.Delete();
                       using(FileStream fs = file.Create())
                       {
-                          StreamWriter writer = new StreamWriter(fs, target);
+                          var writer = new StreamWriter(fs, target);
                           writer.Write(text);
                           writer.Flush();
                       }
@@ -82,7 +82,7 @@ namespace YeongHun.EraTrans.EncodingConversion
         }
         static FileInfo[] GetFiles(DirectoryInfo info)
         {
-            List<FileInfo> files = new List<FileInfo>(info.GetFiles("*.*").Where(
+            var files = new List<FileInfo>(info.GetFiles("*.*").Where(
                 f => {
                     return f.Extension.ToUpper() == ".ERB" || f.Extension.ToUpper() == ".CSV" || f.Extension.ToUpper() == ".ERH";
             }

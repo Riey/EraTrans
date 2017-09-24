@@ -82,7 +82,7 @@ namespace YeongHun.EraTrans
                     }
                 case (Action.BATCH_TRANSLATE):
                     {
-                        List<Tuple<int, LineInfo, string>> diclog = new List<Tuple<int, LineInfo,string>>();
+                        var diclog = new List<Tuple<int, LineInfo,string>>();
                         foreach (var temp in parsers[log.ErbName].StringDictionary)
                         {
                             diclog.Add(new Tuple<int,LineInfo, string>(temp.Key,temp.Value, temp.Value.Str.Replace(log.Str2, log.Str1)));

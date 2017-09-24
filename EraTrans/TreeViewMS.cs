@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TreeViewMS
@@ -103,7 +99,7 @@ namespace TreeViewMS
                 // SHIFT is pressed
                 if (bShift)
                 {
-                    Queue<TreeNode> myQueue = new Queue<TreeNode>();
+                    var myQueue = new Queue<TreeNode>();
 
                     TreeNode uppernode = m_firstNode;
                     TreeNode bottomnode = e.Node;

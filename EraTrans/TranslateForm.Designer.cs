@@ -201,8 +201,8 @@
             this.saveOriginalCB.AutoSize = true;
             this.saveOriginalCB.Checked = true;
             this.saveOriginalCB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.saveOriginalCB.Location = new System.Drawing.Point(3, 736);
-            this.saveOriginalCB.Margin = new System.Windows.Forms.Padding(3, 150, 3, 3);
+            this.saveOriginalCB.Location = new System.Drawing.Point(3, 686);
+            this.saveOriginalCB.Margin = new System.Windows.Forms.Padding(3, 100, 3, 3);
             this.saveOriginalCB.Name = "saveOriginalCB";
             this.saveOriginalCB.Size = new System.Drawing.Size(90, 19);
             this.saveOriginalCB.TabIndex = 18;

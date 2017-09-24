@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -51,13 +50,13 @@ namespace YeongHun.EraTrans
                 }
             }
 
-            Dictionary<string, ErbParser> parsers = new Dictionary<string, ErbParser>();
+            var parsers = new Dictionary<string, ErbParser>();
             Parallel.ForEach(paths, path =>
             {
                 ErbParser parser;
                 try
                 {
-                    parser = new ErbParser(path, setting.ReadEncoding);
+                    parser = new ErbParser(path, setting.ReadEncoding, setting.WriteEncoding);
                     if (parser.StringDictionary.Count == 0 && setting.IgnoreBlankERB)
                         return;
                     lock (parsers)
@@ -80,7 +79,7 @@ namespace YeongHun.EraTrans
                     return;
                 }
             });
-            TranslateForm tf = new TranslateForm(parsers, setting, VersionText.Text);
+            var tf = new TranslateForm(parsers, setting, VersionText.Text);
             tf.ShowDialog();
         }
 
@@ -103,7 +102,7 @@ namespace YeongHun.EraTrans
 
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
-            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            var files = e.Data.GetData(DataFormats.FileDrop) as string[];
             var infos = files.Where(file => File.Exists(file))
                             .Concat(files
                                 .Where(dir => Directory.Exists(dir))

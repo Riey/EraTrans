@@ -1,12 +1,9 @@
-﻿using YeongHun.EZTrans;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 namespace YeongHun.EraTrans
 {
@@ -17,7 +14,29 @@ namespace YeongHun.EraTrans
         private const string LIST_TAG = "LIST";
         private const string PRINTDATA_TAG = "PDAT";
         #endregion
-        public TranslateForm(Dictionary<string,ErbParser>parsers,Setting setting, string version)
+
+        #region Field
+        public delegate void CheckLogHandler(Button btn, bool enable);
+        private bool changed = false;
+        private Dictionary<string, ErbParser> parsers;
+        private string version;
+        private LineSetting currentLineSetting;
+        private Stack<ChangeLog> _logs = new Stack<ChangeLog>();
+        private Stack<ChangeLog> logs
+        {
+            get
+            {
+                back_logs.Clear();
+                return _logs;
+            }
+        }
+        private Stack<ChangeLog> back_logs = new Stack<ChangeLog>();
+        private Thread logWatcher;
+        private Setting setting;
+        private bool Init = true;
+        #endregion
+
+        public TranslateForm(Dictionary<string, ErbParser> parsers, Setting setting, string version)
         {
             this.parsers = parsers;
             this.version = version;
@@ -49,10 +68,10 @@ namespace YeongHun.EraTrans
             Action<Button, bool> method = (Button btn, bool enable) => { btn.Enabled = enable; };
             try
             {
-                while(true)
+                while (true)
                 {
 
-                    if(_logs.Count > 0)
+                    if (_logs.Count > 0)
                     {
                         Invoke(new CheckLogHandler(method), 실행취소버튼, true);
                     }
@@ -60,7 +79,7 @@ namespace YeongHun.EraTrans
                     {
                         Invoke(new CheckLogHandler(method), 실행취소버튼, false);
                     }
-                    if(back_logs.Count > 0)
+                    if (back_logs.Count > 0)
                     {
                         Invoke(new CheckLogHandler(method), 다시실행버튼, true);
                     }
@@ -72,7 +91,7 @@ namespace YeongHun.EraTrans
                 }
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return;
             }
@@ -81,9 +100,9 @@ namespace YeongHun.EraTrans
         private int GetLineCount()
         {
             int line = 0;
-            foreach(TreeNode erb_node in wordList.Nodes)
+            foreach (TreeNode erb_node in wordList.Nodes)
             {
-                foreach(TreeNode node in erb_node.Nodes)
+                foreach (TreeNode node in erb_node.Nodes)
                 {
                     line += node.Nodes.Count == 0 ? 1 : node.Nodes.Count;
                 }
@@ -112,13 +131,13 @@ namespace YeongHun.EraTrans
 
             AddErbNodes(erbNodes);
 
-            foreach(var extend in extends)
+            foreach (var extend in extends)
             {
                 erbNodes[extend].Expand();
             }
 
             wordList.Nodes.AddRange(erbNodes.Values.ToArray());
-            if(Top != null)
+            if (Top != null)
             {
                 wordList.TopNode = wordList.Nodes.Find(Top.Name, true).First();
             }
@@ -133,7 +152,7 @@ namespace YeongHun.EraTrans
             {
                 if (!erbNode.Nodes.ContainsKey("PRINTDATA|" + nodeInfo.LineInfo.PrintDataLine + 1))
                 {
-                    TreeNode printNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.PrintDataLine + 1, "PRINTDATA"));
+                    var printNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.PrintDataLine + 1, "PRINTDATA"));
                     printNode.Name = "PRINTDATA|" + nodeInfo.LineInfo.PrintDataLine + 1;
                     printNode.Tag = PRINTDATA_TAG;
                     erbNode.Nodes.Add(printNode);
@@ -144,7 +163,7 @@ namespace YeongHun.EraTrans
                     {
                         if (!printNode.Nodes.ContainsKey("DATALIST|" + nodeInfo.LineInfo.ListLine + 1))
                         {
-                            TreeNode listNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.ListLine + 1, "DATALIST"));
+                            var listNode = new TreeNode(currentLineSetting.GetLine(nodeInfo.LineInfo.ListLine + 1, "DATALIST"));
                             listNode.Name = "DATALIST|" + nodeInfo.LineInfo.ListLine + 1;
                             listNode.Tag = LIST_TAG;
                             printNode.Nodes.Add(listNode);
@@ -168,15 +187,15 @@ namespace YeongHun.EraTrans
 
         private void AddErbNodes(Dictionary<string, TreeNode> erbNodes)
         {
-            foreach(var parser in parsers)
+            foreach (var parser in parsers)
             {
                 var erbNode = new TreeNode(Path.GetFileName(parser.Key));
                 erbNode.Name = parser.Key;
                 erbNode.Tag = ERB_TAG;
                 erbNodes.Add(erbNode.Name, erbNode);
-                foreach(var lineInfo in parser.Value.StringDictionary)
+                foreach (var lineInfo in parser.Value.StringDictionary)
                 {
-                    if(!IsVaildLine(lineInfo.Value))
+                    if (!IsVaildLine(lineInfo.Value))
                     {
                         continue;
                     }
@@ -194,8 +213,8 @@ namespace YeongHun.EraTrans
             {
                 if (!(Node.Tag is NodeInfo))
                     continue;
-                NodeInfo item = Node.Tag as NodeInfo;
-                ChangeForm cf = new ChangeForm(item);
+                var item = Node.Tag as NodeInfo;
+                var cf = new ChangeForm(item);
                 cf.ShowDialog();
                 if (ChangeForm.TranslatedText == null)
                     continue;
@@ -249,7 +268,7 @@ namespace YeongHun.EraTrans
         }
         private void 일괄번역버튼_Click(object sender, EventArgs e)
         {
-            BatchTrans bt = new BatchTrans(parsers, logs);
+            var bt = new BatchTrans(parsers, logs);
             bt.ShowDialog();
             changed = true;
             RefreshWord();
@@ -260,7 +279,7 @@ namespace YeongHun.EraTrans
             if (logs.Count > 0)
             {
                 back_logs.Push(ChangeLog.Back(_logs.Pop(), parsers));
-                    RefreshWord();
+                RefreshWord();
                 changed = true;
             }
         }
@@ -270,7 +289,7 @@ namespace YeongHun.EraTrans
             if (back_logs.Count > 0)
             {
                 _logs.Push(ChangeLog.Back(back_logs.Pop(), parsers));
-                    RefreshWord();
+                RefreshWord();
                 changed = true;
             }
         }
@@ -288,7 +307,7 @@ namespace YeongHun.EraTrans
                 {
                     if (!(node.Tag is NodeInfo))
                         continue;
-                    NodeInfo nodeInfo = node.Tag as NodeInfo;
+                    var nodeInfo = node.Tag as NodeInfo;
                     node.Text = nodeInfo.GetString(setting.LineSetting);
                 }
             }
@@ -315,7 +334,7 @@ namespace YeongHun.EraTrans
                 Save();
             }
         }
-       
+
 
         private void 자동번역버튼_Click(object sender, EventArgs e)
         {
@@ -323,10 +342,10 @@ namespace YeongHun.EraTrans
                 return;
             wordList.BeginUpdate();
 
-            Queue<TreeNode> temp = new Queue<TreeNode>();
+            var temp = new Queue<TreeNode>();
 
             Action<TreeNode> AddNode = null;
-            AddNode = 
+            AddNode =
                 treeNode =>
             {
                 if (!(treeNode.Tag is NodeInfo))
@@ -362,26 +381,6 @@ namespace YeongHun.EraTrans
             wordList.EndUpdate();
             changed = true;
         }
-        #region Field
-        public delegate void CheckLogHandler(Button btn, bool enable);
-        private bool changed = false;
-        private Dictionary<string,ErbParser> parsers;
-        private string version;
-        private LineSetting currentLineSetting;
-        private Stack<ChangeLog> _logs=new Stack<ChangeLog>();
-        private Stack<ChangeLog> logs
-        {
-            get
-            {
-                back_logs.Clear();
-                return _logs;
-            }
-        }
-        private Stack<ChangeLog> back_logs = new Stack<ChangeLog>();
-        private Thread logWatcher;
-        private Setting setting;
-        private bool Init = true;
-        #endregion
 
         private void 빈줄표시_CheckedChanged(object sender, EventArgs e)
         {
@@ -393,6 +392,7 @@ namespace YeongHun.EraTrans
             wordList.Width = Width - 174;
             wordList.Height = Height - 64;
             toolPanal.Location = new System.Drawing.Point(Width - 154, wordList.Location.Y);
+            toolPanal.Height = wordList.Height;
         }
     }
 }

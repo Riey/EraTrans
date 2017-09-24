@@ -13,7 +13,7 @@ namespace 로그분석
             var formatter = new BinaryFormatter();
             string logPath = "";
             logPath = args[0];
-            using(FileStream fs=new FileStream(args[0], FileMode.Open))
+            using(var fs=new FileStream(args[0], FileMode.Open))
             {
                 var e = formatter.Deserialize(fs) as Exception;
                 Console.WriteLine("\tSource\n");

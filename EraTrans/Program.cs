@@ -11,7 +11,6 @@ namespace YeongHun.EraTrans
         internal static readonly string RootPath = Application.StartupPath + Path.DirectorySeparatorChar;
         internal static readonly string LogFilePath = RootPath + "log.dat";
         internal static readonly string ConfigFilePath = RootPath + "Config.txt";
-        internal static readonly string ResourceFolderPath = RootPath + "Res" + Path.DirectorySeparatorChar;
 
         /// <summary>
         /// 해당 응용 프로그램의 주 진입점입니다.
@@ -19,21 +18,17 @@ namespace YeongHun.EraTrans
         [STAThread]
         static void Main(string[] args)
         {
-            if (!Directory.Exists(ResourceFolderPath))
-                Directory.CreateDirectory(ResourceFolderPath);
-            if (!Directory.Exists(RootPath + "Backup"))
-                Directory.CreateDirectory(RootPath + "Backup");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 #if !DEBUG
             try
             {
 #endif
-            ConfigDic config = new ConfigDic();
+            var config = new ConfigDic();
             config.Load(new FileStream(ConfigFilePath, FileMode.OpenOrCreate));
             if (!config.TryGetValue("ezTransXP_Path", out string ezPath))
             {
-                FolderBrowserDialog dialog = new FolderBrowserDialog()
+                var dialog = new FolderBrowserDialog()
                 {
                     ShowNewFolderButton = true,
                     Description = "ezTrans XP가 설치된 경로를 선택해 주세요"
@@ -56,7 +51,7 @@ namespace YeongHun.EraTrans
         }
             catch (Exception e)
             {  
-                FileStream fs = new FileStream(LogFilePath, FileMode.Create);
+                var fs = new FileStream(LogFilePath, FileMode.Create);
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, e);
                 fs.Flush();
                 fs.Dispose();

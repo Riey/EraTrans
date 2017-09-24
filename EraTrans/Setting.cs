@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using YeongHun.Common.Config;
 
@@ -32,6 +29,9 @@ namespace YeongHun.EraTrans
         [LoadableProperty("UTF-8", Tag = "Encoding")]
         public Encoding ReadEncoding { get; set; }
 
+        [LoadableProperty("UTF-8", Tag = "Encoding")]
+        public Encoding WriteEncoding { get; set; }
+
         [LoadableProperty("True", Tag = "View")]
         public bool IgnoreBlankERB { get; set; }
 
@@ -48,12 +48,14 @@ namespace YeongHun.EraTrans
             {
                 var format = Regex.Match(str, @"[^\s]+").Value;
                 var strMatch = Regex.Match(Regex.Replace(str, @"[^\s]+\s(.*)", "$1"), @"([^\|]+)");
-                List<string> strs = new List<string>();
+                var strs = new List<string>();
+
                 while (strMatch.Value != string.Empty)
                 {
                     strs.Add(strMatch.Value);
                     strMatch = strMatch.NextMatch();
                 }
+
                 return new LineSetting(format, strs.ToArray());
             });
             configDic.AddParser(str =>
@@ -64,10 +66,9 @@ namespace YeongHun.EraTrans
                 }
                 catch
                 {
-                    if (int.TryParse(str, out int codePage))
-                        return Encoding.GetEncoding(codePage);
-                    else
-                        throw new InvalidCastException();
+                    return int.TryParse(str, out int codePage)
+                        ? Encoding.GetEncoding(codePage)
+                        : throw new InvalidCastException();
                 }
             });
 

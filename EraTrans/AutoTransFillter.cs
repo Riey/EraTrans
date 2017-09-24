@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace YeongHun.EraTrans
 {
@@ -16,9 +13,9 @@ namespace YeongHun.EraTrans
 
             public SeperatedString(string rawStr, params string[] seperators)
             {
-                List<string> stringTemp = new List<string>();
-                List<string> seperatorTemp = new List<string>();
-                StringBuilder sb = new StringBuilder();
+                var stringTemp = new List<string>();
+                var seperatorTemp = new List<string>();
+                var sb = new StringBuilder();
                 for (int i = 0; i < rawStr.Length; i++)
                 {
                     var index = IndexOf(rawStr, i, seperators);
@@ -53,7 +50,7 @@ namespace YeongHun.EraTrans
 
             public override string ToString()
             {
-                StringBuilder sb = new StringBuilder(SeperatedStrings[0]);
+                var sb = new StringBuilder(SeperatedStrings[0]);
                 for (int i = 1; i < SeperatedStrings.Length; i++)
                 {
                     sb.Append(seperators[i - 1]);
@@ -81,15 +78,15 @@ namespace YeongHun.EraTrans
 
         private static string TranslateWithEscape(string jpStr)
         {
-            SeperatedString perSep = new SeperatedString(jpStr, "%");
+            var perSep = new SeperatedString(jpStr, "%");
             for (int i = 0; i < perSep.SeperatedStrings.Length; i++)
             {
                 if (i % 2 == 1) continue;
-                SeperatedString braceSep = new SeperatedString(perSep.SeperatedStrings[i], "{", "}");
+                var braceSep = new SeperatedString(perSep.SeperatedStrings[i], "{", "}");
                 for (int j = 0; j < braceSep.SeperatedStrings.Length; j++)
                 {
                     if (j % 2 == 1) continue;
-                    SeperatedString atSep = new SeperatedString(braceSep.SeperatedStrings[j], "\\@");
+                    var atSep = new SeperatedString(braceSep.SeperatedStrings[j], "\\@");
                     for (int k = 0; k < atSep.SeperatedStrings.Length; k++)
                     {
                         if (k % 2 == 1) continue;

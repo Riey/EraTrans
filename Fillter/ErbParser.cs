@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace YeongHun.EraTrans
 {
     public class ErbParser
     {
-        public ErbParser(string erb_path):this(erb_path,Encoding.Unicode)
+        private readonly Encoding _writerEncoding;
+
+        public ErbParser(string erb_path) : this(erb_path, Encoding.UTF8, Encoding.UTF8)
         {
-            
+
         }
-        public ErbParser(string erb_path,Encoding encoding)
+
+        public ErbParser(string erb_path, Encoding readerEncoding, Encoding writerEncoding)
         {
-            this.ErbPath = erb_path;
+            ErbPath = erb_path;
+            _writerEncoding = writerEncoding;
+
             if (!File.Exists(erb_path))
             {
                 throw new FileNotFoundException();
             }
-            FileInfo info = new FileInfo(erb_path);
-            if (!File.Exists(Application.StartupPath + "\\Backup\\" + info.Name))
-            {
-                info.CopyTo(Application.StartupPath + "\\Backup\\" + info.Name);
-            }
+
+            var info = new FileInfo(erb_path);
+
             using (FileStream ErbStream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                StreamReader reader = encoding != null ? new StreamReader(ErbStream, encoding) : new StreamReader(ErbStream, true);
+                StreamReader reader = readerEncoding != null ? new StreamReader(ErbStream, readerEncoding) : new StreamReader(ErbStream, true);
                 {
-                    ErbEncoding = reader.CurrentEncoding;
                     int lineNo = -1;
 
                     string originalText = null;
@@ -117,9 +115,10 @@ namespace YeongHun.EraTrans
                                 StringDictionary.Add(lineNo, new LineInfo(buttonMatch.Groups["PrintText"].Value, false, false, originalText));
                             }
                             else
-                            {//일반 PRINT문
+                            {
+                                //일반 PRINT문
                                 NonStringDictionary.Add(lineNo, Tuple.Create(match.Groups["Left"].Value, match.Groups["Right"].Value));
-                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS"),originalText));
+                                StringDictionary.Add(lineNo, new LineInfo(match.Groups["Content"].Value, code.Contains("FORM"), code.Contains("FORMS"), originalText));
                             }
 
                         }
@@ -148,9 +147,9 @@ namespace YeongHun.EraTrans
 
         public void Save(OutputType type)
         {
-            using (FileStream ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
+            using (var ErbStream = new FileStream(ErbPath, FileMode.Create, FileAccess.Write))
             {
-                using (StreamWriter writer = new StreamWriter(ErbStream, ErbEncoding))
+                using (var writer = new StreamWriter(ErbStream, _writerEncoding))
                 {
                     switch (type)
                     {
@@ -188,41 +187,16 @@ namespace YeongHun.EraTrans
                 }
             }
         }
-        private string erbPath;
-        private Encoding erbEncoding;
 
-        private Dictionary<int,string> OriginalTexts { get; set; } = new Dictionary<int, string>();
+        private Dictionary<int, string> OriginalTexts { get; set; } = new Dictionary<int, string>();
 
         public Dictionary<int, LineInfo> StringDictionary { get; private set; } = new Dictionary<int, LineInfo>();
 
         public Dictionary<int, Tuple<string, string>> NonStringDictionary { get; private set; } = new Dictionary<int, Tuple<string, string>>();
 
-        public string ErbPath
-        {
-            get
-            {
-                return erbPath;
-            }
-
-            set
-            {
-                erbPath = value;
-            }
-        }
-
-        public Encoding ErbEncoding
-        {
-            get
-            {
-                return erbEncoding;
-            }
-
-            set
-            {
-                erbEncoding = value;
-            }
-        }
+        public string ErbPath { get; set; }
     }
+
     static class GetLang
     {
         public static void Get(string str, out bool Korean, out bool Japanese)
