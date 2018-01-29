@@ -42,7 +42,7 @@
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(100, 16);
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 0;
             this.textBox1.TabStop = false;
             this.textBox1.Text = "원본";
@@ -53,7 +53,7 @@
             this.원본.Location = new System.Drawing.Point(12, 37);
             this.원본.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.원본.Name = "원본";
-            this.원본.Size = new System.Drawing.Size(100, 23);
+            this.원본.Size = new System.Drawing.Size(100, 27);
             this.원본.TabIndex = 0;
             // 
             // textBox3
@@ -63,7 +63,7 @@
             this.textBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(100, 16);
+            this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 2;
             this.textBox3.TabStop = false;
             this.textBox3.Text = "번역본";
@@ -74,7 +74,7 @@
             this.번역본.Location = new System.Drawing.Point(12, 92);
             this.번역본.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.번역본.Name = "번역본";
-            this.번역본.Size = new System.Drawing.Size(100, 23);
+            this.번역본.Size = new System.Drawing.Size(100, 27);
             this.번역본.TabIndex = 1;
             // 
             // 적용버튼
@@ -89,12 +89,11 @@
             this.적용버튼.UseVisualStyleBackColor = true;
             this.적용버튼.Click += new System.EventHandler(this.적용버튼_Click);
             // 
-            // Batch_Trans
+            // BatchTrans
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(253, 147);
-            this.ControlBox = false;
             this.Controls.Add(this.적용버튼);
             this.Controls.Add(this.번역본);
             this.Controls.Add(this.textBox3);
@@ -102,7 +101,9 @@
             this.Controls.Add(this.textBox1);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "Batch_Trans";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "BatchTrans";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
