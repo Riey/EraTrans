@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     public class NodeInfo
     {

@@ -1,4 +1,4 @@
-﻿
+﻿using Riey.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,9 +7,8 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using YeongHun.Common.Config;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     public partial class MainForm : Form
     {

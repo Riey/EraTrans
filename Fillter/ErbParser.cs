@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     public class ErbParser
     {

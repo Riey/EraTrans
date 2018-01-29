@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using YeongHun.Common.Config;
+using Riey.Common.Config;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     [Serializable]
     public sealed class Setting:LoadableConfig

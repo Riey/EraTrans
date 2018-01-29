@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace YeongHun.EraTrans.Properties {
+namespace Riey.EraTrans.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

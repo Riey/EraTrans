@@ -110,8 +110,8 @@
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Config">
-      <HintPath>..\Library\Config.dll</HintPath>
+    <Reference Include="Config, Version=1.3.1.20136, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Riey.Common.Config.1.3.1.1\lib\portable-net45+win8+wpa81+wp8\Config.dll</HintPath>
     </Reference>
     <Reference Include="EZTrans, Version=2.0.1.40017, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

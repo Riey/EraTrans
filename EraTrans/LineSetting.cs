@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     [Serializable]
     public class LineSetting

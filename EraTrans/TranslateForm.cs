@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     public partial class TranslateForm : Form
     {

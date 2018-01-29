@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     [Serializable]
     public class ChangeLog

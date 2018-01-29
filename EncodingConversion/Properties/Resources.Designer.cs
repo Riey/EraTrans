@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace YeongHun.EraTrans.EncodingConversion.Properties {
+namespace Riey.EraTrans.EncodingConversion.Properties {
     using System;
     
     

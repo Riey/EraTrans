@@ -1,4 +1,4 @@
-﻿namespace YeongHun.EraTrans
+﻿namespace Riey.EraTrans
 {
     partial class MainForm
     {

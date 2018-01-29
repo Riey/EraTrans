@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
-using YeongHun.Common.Config;
+using Riey.Common.Config;
 using Riey.EZTrans;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     static class Program
     {

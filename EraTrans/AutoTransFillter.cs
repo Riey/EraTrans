@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YeongHun.EraTrans
+namespace Riey.EraTrans
 {
     static class AutoTransFillter
     {
