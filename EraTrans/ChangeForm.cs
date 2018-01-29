@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Riey.EZTrans;
+using System;
 using System.Windows.Forms;
-using YeongHun.EZTrans;
 
 namespace YeongHun.EraTrans
 {

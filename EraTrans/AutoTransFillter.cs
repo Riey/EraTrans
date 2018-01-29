@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Riey.EZTrans;
+using System.Collections.Generic;
 using System.Text;
 
 namespace YeongHun.EraTrans
@@ -72,7 +73,7 @@ namespace YeongHun.EraTrans
             }
             else
             {
-                return YeongHun.EZTrans.TranslateXP.Translate(info.Str);
+                return TranslateXP.Translate(info.Str);
             }
         }
 
@@ -90,7 +91,7 @@ namespace YeongHun.EraTrans
                     for (int k = 0; k < atSep.SeperatedStrings.Length; k++)
                     {
                         if (k % 2 == 1) continue;
-                        YeongHun.EZTrans.TranslateXP.Translate(ref atSep.SeperatedStrings[k]);
+                        TranslateXP.Translate(ref atSep.SeperatedStrings[k]);
                     }
                     braceSep.SeperatedStrings[j] = atSep.ToString();
                 }
