@@ -74,7 +74,7 @@ namespace Riey.EraTrans
 
             configDic.AddParser(str =>
             {
-                Match match = Regex.Match(str, @"\((?<X>\d+), (?<Y>\d+)\)");
+                Match match = Regex.Match(str, @"\((?<X>-?\d+), (?<Y>-?\d+)\)");
                 if (match.Success)
                     return new Point(int.Parse(match.Groups["X"].Value), int.Parse(match.Groups["Y"].Value));
                 throw new InvalidCastException();
